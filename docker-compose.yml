@@ -1,0 +1,274 @@
+version: "3"
+
+services:
+  #######################
+  ## Internet          ##
+  #######################
+
+  ## Router
+  router:
+    build: .
+    image: vpntest/base
+    hostname: router
+    container_name: router
+    sysctls:
+      net.ipv4.ip_forward: 1
+      net.ipv6.conf.all.forwarding: 1
+      net.ipv4.conf.all.accept_redirects: 0
+      net.ipv4.conf.all.send_redirects: 0
+    cap_add:
+      - NET_ADMIN
+      - SYS_ADMIN
+      - SYS_MODULE
+    volumes:
+      - ./router.sh:/start.sh
+    network_mode: bridge
+    networks:
+      default:
+      # Interface towards Gateway S
+      isp_link_s:
+        # ipv4_address: 172.30.30.1
+      # Interface towards Gateway A
+      isp_link_a:
+        # ipv4_address: 172.16.16.1
+      # Interface towards Gateway B
+      isp_link_b:
+        # ipv4_address: 172.18.18.1
+
+  #######################
+  ## Customer site A   ##
+  #######################
+
+  ## Gateway A
+  gateway-a:
+    build: .
+    image: vpntest/base
+    hostname: gateway-a
+    container_name: gateway-a
+    sysctls:
+      net.ipv4.ip_forward: 1
+      net.ipv6.conf.all.forwarding: 1
+      net.ipv4.conf.all.accept_redirects: 0
+      net.ipv4.conf.all.send_redirects: 0
+    cap_add:
+      - NET_ADMIN
+      - SYS_ADMIN
+      - SYS_MODULE
+    volumes:
+      - ./gateway-a.sh:/start.sh
+      - ./crls:/crls
+    networks:
+      # Interface towards router
+      isp_link_a:
+        # ipv4_address: 172.16.16.16
+      # Interface towards customer site network
+      intranet_a:
+        # ipv4_address: 10.1.0.1
+  # Client A1
+  client-a1:
+    build: .
+    image: vpntest/base
+    hostname: client-a1
+    container_name: client-a1
+    sysctls:
+      net.ipv4.ip_forward: 1
+      net.ipv6.conf.all.forwarding: 1
+      net.ipv4.conf.all.accept_redirects: 0
+      net.ipv4.conf.all.send_redirects: 0
+    cap_add:
+      - NET_ADMIN
+      - SYS_ADMIN
+      - SYS_MODULE
+    volumes:
+      - ./client-1.sh:/start.sh
+      - ./apps:/apps
+    networks:
+      intranet_a:
+        # ipv4_address: 10.1.0.2
+
+  # Client A2
+  client-a2:
+    build: .
+    image: vpntest/base
+    hostname: client-a2
+    container_name: client-a2
+    sysctls:
+      net.ipv4.ip_forward: 1
+      net.ipv6.conf.all.forwarding: 1
+      net.ipv4.conf.all.accept_redirects: 0
+      net.ipv4.conf.all.send_redirects: 0
+    cap_add:
+      - NET_ADMIN
+      - SYS_ADMIN
+      - SYS_MODULE
+    volumes:
+      - ./client-2.sh:/start.sh
+      - ./apps:/apps
+    networks:
+      intranet_a:
+        # ipv4_address: 10.1.0.3
+
+  #######################
+  ## Customer site B   ##
+  #######################
+
+  ## Gateway B
+  gateway-b:
+    build: .
+    image: vpntest/base
+    hostname: gateway-b
+    container_name: gateway-b
+    sysctls:
+      net.ipv4.ip_forward: 1
+      net.ipv6.conf.all.forwarding: 1
+      net.ipv4.conf.all.accept_redirects: 0
+      net.ipv4.conf.all.send_redirects: 0
+    cap_add:
+      - NET_ADMIN
+      - SYS_ADMIN
+      - SYS_MODULE
+    volumes:
+      - ./gateway-b.sh:/start.sh
+      - ./crls:/crls
+    networks:
+      # Interface towards router
+      isp_link_b:
+        # ipv4_address: 172.18.18.18
+      # Interface towards customer site network
+      intranet_b:
+        # ipv4_address: 10.1.0.1
+
+  # Client B1
+  client-b1:
+    build: .
+    image: vpntest/base
+    hostname: client-b1
+    container_name: client-b1
+    sysctls:
+      net.ipv4.ip_forward: 1
+      net.ipv6.conf.all.forwarding: 1
+      net.ipv4.conf.all.accept_redirects: 0
+      net.ipv4.conf.all.send_redirects: 0
+    cap_add:
+      - NET_ADMIN
+      - SYS_ADMIN
+      - SYS_MODULE
+    volumes:
+      - ./client-1.sh:/start.sh
+      - ./apps:/apps
+    networks:
+      intranet_b:
+        # ipv4_address: 10.1.0.2
+
+  # Client B2
+  client-b2:
+    build: .
+    image: vpntest/base
+    hostname: client-b2
+    container_name: client-b2
+    sysctls:
+      net.ipv4.ip_forward: 1
+      net.ipv6.conf.all.forwarding: 1
+      net.ipv4.conf.all.accept_redirects: 0
+      net.ipv4.conf.all.send_redirects: 0
+    cap_add:
+      - NET_ADMIN
+      - SYS_ADMIN
+      - SYS_MODULE
+    volumes:
+      - ./client-2.sh:/start.sh
+      - ./apps:/apps
+    networks:
+      intranet_b:
+        # ipv4_address: 10.1.0.3
+
+  ##########################
+  # Cloud network S       ##
+  ##########################
+
+  ## Gateway S
+  gateway-s:
+    build: .
+    image: vpntest/base
+    hostname: gateway-s
+    container_name: gateway-s
+    sysctls:
+      net.ipv4.ip_forward: 1
+      net.ipv6.conf.all.forwarding: 1
+      net.ipv4.conf.all.accept_redirects: 0
+      net.ipv4.conf.all.send_redirects: 0
+    cap_add:
+      - NET_ADMIN
+      - SYS_ADMIN
+      - SYS_MODULE
+    volumes:
+      - ./gateway-s.sh:/start.sh
+      - ./crls:/crls
+    networks:
+      # Interface towards router
+      isp_link_s:
+        # ipv4_address: 172.30.30.30
+      # Interface towards customer site network
+      cloud_network_s:
+        # ipv4_address: 10.1.0.1
+
+  # Server S1
+  server-s1:
+    build: .
+    image: vpntest/base
+    hostname: server-s1
+    container_name: server-s1
+    sysctls:
+      net.ipv4.ip_forward: 1
+      net.ipv6.conf.all.forwarding: 1
+      net.ipv4.conf.all.accept_redirects: 0
+      net.ipv4.conf.all.send_redirects: 0
+    cap_add:
+      - NET_ADMIN
+      - SYS_ADMIN
+      - SYS_MODULE
+    volumes:
+      - ./server-s1.sh:/start.sh
+      - ./apps:/apps
+      # - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      cloud_network_s:
+        # ipv4_address: 10.1.0.2
+
+networks:
+  isp_link_s:
+    driver: macvlan
+    internal: true
+    # ipam:
+    #   config:
+    #     - subnet: 172.30.30.0/24
+  isp_link_a:
+    driver: macvlan
+    internal: true
+    # ipam:
+    #   config:
+    #     - subnet: 172.16.16.0/24
+  isp_link_b:
+    driver: macvlan
+    internal: true
+    # ipam:
+    #   config:
+    #     - subnet: 172.18.18.0/24
+  intranet_a:
+    driver: macvlan
+    internal: true
+    # ipam:
+    #   config:
+    #     - subnet: 10.1.0.0/16
+  intranet_b:
+    driver: macvlan
+    internal: true
+    # ipam:
+    #   config:
+    #     - subnet: 10.1.0.0/16
+  cloud_network_s:
+    driver: macvlan
+    internal: true
+    # ipam:
+    #   config:
+    #     - subnet: 10.1.0.0/16

@@ -1,0 +1,252 @@
+\documentclass[article]{aaltoseries}
+\usepackage[utf8]{inputenc}
+
+
+\begin{document}
+ 
+%=========================================================
+
+\title{Implementing a Virtual Private Network System among Containers}
+
+\author{Songlin Jiang% Your first and last name: do _not_ add your student number
+\\\textnormal{\texttt{songlin.jiang@aalto.fi}}} % Your Aalto e-mail address
+
+\affiliation{\textbf{Tutor}: Tuomas Aura} % First and last name of your tutor
+
+\maketitle
+
+%==========================================================
+
+\begin{abstract}
+This paper investigates the possibilities of implementing a Virtual Private Network (VPN) System among containers.
+
+% TODO: Remove
+More content to be added when this essay finishes.
+
+\vspace{3mm}
+\noindent KEYWORDS: Container, Network, Cloud, VPN
+
+\end{abstract}
+
+
+%============================================================
+
+
+\section{Introduction}
+
+In recent years, as more and more applications are going cloud, container technologies such as Docker have received much attention from industry and academia. Containers are much more efficient and lightweight than virtual machines because containers share the Linux Kernel with the host. In contrast, virtual machines employ hardware virtualization, which needs more resources. \cite{10.1145/2988336.2988337} Meanwhile, Virtual Private Networks (VPN) get popular because of the privacy needs and vulnerable networking environment for communications.
+
+VPNs are typically used in complex networking environments with many different network components. It is still a common practice to build and test network systems using virtual machines, which leads to many problems. The problems can worsen when testing VPN systems, as each network component needs a virtual machine instance. Simultaneously running multiple virtual machine instances on one host machine to simulate the network environment can be memory-consuming, which significantly troubles low-end devices and CI/CD implementation. Moreover, as Mac M1 / M2 chips are based on arm64 architecture, open-source virtual machine hypervisors are not well supported for arm64 hardware virtualization as of this writing. However, arm64 is well supported by the containers. \cite{9852232}
+
+As a result, this paper investigates the possibilities of implementing a VPN system based on containers to conquer the disadvantages of virtual machines.
+
+This paper is organized as follows. Section 2 is a background review of current technologies used for container networking and VPN systems. Section 3 defines our goal for implementing the VPN system using containers, while Section 4 explains the details of our implementation. Then Section 5 presents our evaluation result by comparing the VPN system performance between the one implemented in the virtual machine and the one in the container. Finally, Section 6 provides the concluding remarks.
+
+%============================================================
+
+
+\section{Technology}
+
+NB: As the experiment has to be completed to determine the technology to use, I didn't write this part for draft 1.
+
+\subsection{Container Network}
+
+\subsection{Virtual Private Network}
+
+To be added.
+
+
+%============================================================
+
+
+\section{Goal}
+
+To be added.
+
+
+%============================================================
+
+
+\section{Implementation}
+
+To be added.
+
+
+%============================================================
+
+
+\section{Evaluation}
+
+To be added.
+
+
+%============================================================
+
+
+\section{Conclusion}
+
+To be added.
+
+
+%============================================================
+
+
+% \section{Simple things first}
+
+% In this section, we give some simple examples of Latex mark-up.
+% Sec.~\ref{sec:emphasis} emphasizes important points and
+% Sec.~\ref{sec:math} gives examples of math formulas.
+% Finally, \ref{sec:list} demonstrates lists.
+
+
+% %------------------------------------------------------------
+
+
+% \subsection{Emphasizing text}
+% \label{sec:emphasis}
+
+% \textit{Italics} is a good way to emphasize printed text. However,
+% \textbf{boldface} looks better when converted to HTML.
+
+% Paragraphs are separated by an empty line in the Latex source code.
+% Latex puts extra space between sentences, which you must suppress
+% after a period that does not end a sentence, e.g.\ after this acronym.
+
+% Cross-references to figures (Fig.~\ref{fig:mypicture1}), tables
+% (Table~\ref{tab:mytable1}), other sections (Sec.~\ref{sec:math})
+% are easy to create. 
+
+
+% %------------------------------------------------------------
+
+
+% \subsection{Mathematics}
+% \label{sec:math}
+
+% In the mathematics mode, you can have subscripts such as $K_{master}$
+% and superscripts like $2^x$. Longer formulas may be put on a separate
+% line:
+% \[ \emptyset \in \emptyset \; \Rightarrow \; E \neq mc^2. \]
+
+% You may also want to number the formulas like Eq.~(\ref{eqn:myequation1})
+% below.
+% \begin{equation}\label{eqn:myequation1}
+% C = E_{K_{public}}(P) = P^e. \hspace{10mm}   P = D_{K_{private}}(C) = C^d.
+% \end{equation}
+
+
+
+% %------------------------------------------------------------
+
+
+% \subsection{Make a list}
+% \label{sec:list}
+
+% Lists can have either bullets or numbers on them. 
+
+% \begin{itemize}
+% \item one item
+% \item another item, which is an exceptionally long one for an item
+%   and consequently continues on the next line.
+% \end{itemize}
+
+% Lists can have several levels. Item~\ref{kukkuu} below contains
+% another list.
+% \begin{enumerate}
+% \item the fist item \label{kukkuu}
+%   \begin{enumerate}
+%   \item the first subitem 
+%   \item the second subitem
+%   \end{enumerate}
+% \item the second item
+% \end{enumerate}
+
+
+% %============================================================
+
+
+% \section{More complex stuff}
+
+% This section provides examples of more complex things.
+
+
+% %------------------------------------------------------------
+
+
+% \subsection{Data served on a table}
+
+
+% Table~\ref{tab:mytable1} presents some data in tabular form. 
+
+% \begin{table}[t!]
+%   \begin{center}
+%     \begin{tabular}{|l|lr|}
+%     \hline
+%     Protocol & Year &  RFC \\
+%     \hline
+%     TCP      & 1981 &  793 \\
+%     ISAKMP   & 1998 & 2408 \\
+%     Photuris & 1999 & 2522 \\
+%     \hline
+%     \end{tabular}
+%     \caption{A table with some protocols}
+%     \label{tab:mytable1}
+%   \end{center}
+% \end{table}
+
+
+% %------------------------------------------------------------
+
+
+% \subsection{Adding references}
+% \label{sec:references}
+
+% Do not forget to give pointers to the literature. If you are listing
+% stuff related to your topic, you can give several references once
+% \cite{Com00,HTS03,Nik99}. However, usually you should give only one, for example the standard describing the stuff \cite{RFC2408} and if you want to directly use someone else's words, use both quotation marks and refer to the source, for example that ``the developer does not need to know all about the framework to develop a working implementation'' \cite{Suo98}. Remember also to mark references to your pictures if they are not created by your own mind!
+
+% If you plan to write with Latex regularly, create your own BibTeX
+% database and use BibTeX to typeset the bibliographies automatically.
+% In the long run, it will save you a lot of time and effort compared to
+% compiling reference lists by hand.
+
+
+% %------------------------------------------------------------
+
+
+% \subsection{Embedded pictures}
+% \label{sec:pictures}
+
+% Fig.~\ref{fig:mypicture1} is an embedded picture. The supported formats for pictures
+% depend on the actual LaTeX command used. For instance, regular \LaTeX supports
+% pictures in EPS (Embedded PostScript) format, while pdf\LaTeX supports PDF (Portable
+% Document Format), PNG (Portable Network Graphics) and JPEG (Joint Photographic Experts
+% Group). It is recommended to use either EPS or PDF for diagrams as well as for any picture
+% which includes vector images.
+
+% \begin{figure}[t!]
+%   \begin{center}
+%     % Note how the file extension has been removed from the filename below
+%     % so that the LaTeX command can automatically pick any supported file format
+%     \includegraphics[width=.5\textwidth]{figures/sample}
+%     \caption{An embedded picture}
+%     \label{fig:mypicture1}
+%   \end{center}
+% \end{figure}
+
+
+% %============================================================
+
+
+% \section{Yet another section title}
+
+% To be added.
+
+
+%============================================================
+
+
+\bibliographystyle{plain}
+\bibliography{cs-seminar}
+
+\end{document}
