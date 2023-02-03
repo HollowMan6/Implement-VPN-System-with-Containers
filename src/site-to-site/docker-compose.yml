@@ -20,13 +20,13 @@ services:
       default:
       # Interface towards Gateway S
       isp_link_s:
-        ipv4_address: 172.30.30.2
+        ipv4_address: 172.7.7.2
       # Interface towards Gateway A
       isp_link_a:
-        ipv4_address: 172.16.16.2
+        ipv4_address: 172.6.6.2
       # Interface towards Gateway B
       isp_link_b:
-        ipv4_address: 172.18.18.2
+        ipv4_address: 172.8.8.2
 
   #######################
   ## Customer site A   ##
@@ -46,7 +46,7 @@ services:
     networks:
       # Interface towards router
       isp_link_a:
-        ipv4_address: 172.16.16.16
+        ipv4_address: 172.6.6.6
       # Interface towards customer site network
       intranet_a:
         ipv4_address: 10.1.0.2
@@ -98,7 +98,7 @@ services:
     networks:
       # Interface towards router
       isp_link_b:
-        ipv4_address: 172.18.18.18
+        ipv4_address: 172.8.8.8
       # Interface towards customer site network
       intranet_b:
         ipv4_address: 10.2.0.2
@@ -151,7 +151,7 @@ services:
     networks:
       # Interface towards router
       isp_link_s:
-        ipv4_address: 172.30.30.30
+        ipv4_address: 172.7.7.7
       # Interface towards customer site network
       cloud_network_s:
         ipv4_address: 10.3.0.2
@@ -178,19 +178,19 @@ networks:
     internal: true
     ipam:
       config:
-        - subnet: 172.30.30.0/24
+        - subnet: 172.7.7.0/24
   isp_link_a:
     driver: macvlan
     internal: true
     ipam:
       config:
-        - subnet: 172.16.16.0/24
+        - subnet: 172.6.6.0/24
   isp_link_b:
     driver: macvlan
     internal: true
     ipam:
       config:
-        - subnet: 172.18.18.0/24
+        - subnet: 172.8.8.0/24
   intranet_a:
     driver: macvlan
     internal: true
