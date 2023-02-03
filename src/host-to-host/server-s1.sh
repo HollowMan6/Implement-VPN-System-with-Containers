@@ -22,6 +22,8 @@ dockerd-entrypoint.sh &
 wait-on socket:/var/run/docker.sock
 
 ## Start server
+docker rm -f s1
+docker rm -f s2
 docker run -p 30000:8080 -d --name s1 -v $PWD:/app -w /app node:16 node server.js
 docker run -p 30001:8080 -d --name s2 -v $PWD:/app -w /app node:16 node server.js
 
