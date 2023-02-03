@@ -1,5 +1,5 @@
 #! /bin/bash
-# This script is run on client-b1 when it boots up
+# This script is run on client-*2 when it boots up
 
 # Set up the network interface
 # intranet_*

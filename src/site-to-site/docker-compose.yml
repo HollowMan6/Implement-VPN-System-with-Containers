@@ -1,0 +1,211 @@
+version: "3"
+
+services:
+  #######################
+  ## Internet          ##
+  #######################
+
+  ## Router
+  router:
+    build: .
+    image: vpntest/base
+    hostname: router
+    container_name: srouter
+    cap_add:
+      - NET_ADMIN
+    volumes:
+      - ./router.sh:/start.sh
+    network_mode: bridge
+    networks:
+      default:
+      # Interface towards Gateway S
+      isp_link_s:
+        ipv4_address: 172.30.30.2
+      # Interface towards Gateway A
+      isp_link_a:
+        ipv4_address: 172.16.16.2
+      # Interface towards Gateway B
+      isp_link_b:
+        ipv4_address: 172.18.18.2
+
+  #######################
+  ## Customer site A   ##
+  #######################
+
+  ## Gateway A
+  gateway-a:
+    build: .
+    image: vpntest/base
+    hostname: gateway-a
+    container_name: sgateway-a
+    cap_add:
+      - NET_ADMIN
+    volumes:
+      - ./gateway-a.sh:/start.sh
+      - ./crls:/crls
+    networks:
+      # Interface towards router
+      isp_link_a:
+        ipv4_address: 172.16.16.16
+      # Interface towards customer site network
+      intranet_a:
+        ipv4_address: 10.1.0.2
+  # Client A1
+  client-a1:
+    build: .
+    image: vpntest/base
+    hostname: client-a1
+    container_name: sclient-a1
+    cap_add:
+      - NET_ADMIN
+    volumes:
+      - ./client-a.sh:/start.sh
+      - ./apps:/apps
+    networks:
+      intranet_a:
+        ipv4_address: 10.1.0.3
+
+  # Client A2
+  client-a2:
+    build: .
+    image: vpntest/base
+    hostname: client-a2
+    container_name: sclient-a2
+    cap_add:
+      - NET_ADMIN
+    volumes:
+      - ./client-a.sh:/start.sh
+      - ./apps:/apps
+    networks:
+      intranet_a:
+        ipv4_address: 10.1.0.4
+
+  #######################
+  ## Customer site B   ##
+  #######################
+
+  ## Gateway B
+  gateway-b:
+    build: .
+    image: vpntest/base
+    hostname: gateway-b
+    container_name: sgateway-b
+    cap_add:
+      - NET_ADMIN
+    volumes:
+      - ./gateway-b.sh:/start.sh
+      - ./crls:/crls
+    networks:
+      # Interface towards router
+      isp_link_b:
+        ipv4_address: 172.18.18.18
+      # Interface towards customer site network
+      intranet_b:
+        ipv4_address: 10.2.0.2
+
+  # Client B1
+  client-b1:
+    build: .
+    image: vpntest/base
+    hostname: client-b1
+    container_name: sclient-b1
+    cap_add:
+      - NET_ADMIN
+    volumes:
+      - ./client-b.sh:/start.sh
+      - ./apps:/apps
+    networks:
+      intranet_b:
+        ipv4_address: 10.2.0.3
+
+  # Client B2
+  client-b2:
+    build: .
+    image: vpntest/base
+    hostname: client-b2
+    container_name: sclient-b2
+    cap_add:
+      - NET_ADMIN
+    volumes:
+      - ./client-b.sh:/start.sh
+      - ./apps:/apps
+    networks:
+      intranet_b:
+        ipv4_address: 10.2.0.4
+
+  ##########################
+  # Cloud network S       ##
+  ##########################
+
+  ## Gateway S
+  gateway-s:
+    build: .
+    image: vpntest/base
+    hostname: gateway-s
+    container_name: sgateway-s
+    cap_add:
+      - NET_ADMIN
+    volumes:
+      - ./gateway-s.sh:/start.sh
+      - ./crls:/crls
+    networks:
+      # Interface towards router
+      isp_link_s:
+        ipv4_address: 172.30.30.30
+      # Interface towards customer site network
+      cloud_network_s:
+        ipv4_address: 10.3.0.2
+
+  # Server S1
+  server-s1:
+    build: .
+    image: vpntest/base
+    hostname: server-s1
+    container_name: sserver-s1
+    cap_add:
+      - NET_ADMIN
+    volumes:
+      - ./server-s1.sh:/start.sh
+      - ./apps:/apps
+      # - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      cloud_network_s:
+        ipv4_address: 10.3.0.3
+
+networks:
+  isp_link_s:
+    driver: macvlan
+    internal: true
+    ipam:
+      config:
+        - subnet: 172.30.30.0/24
+  isp_link_a:
+    driver: macvlan
+    internal: true
+    ipam:
+      config:
+        - subnet: 172.16.16.0/24
+  isp_link_b:
+    driver: macvlan
+    internal: true
+    ipam:
+      config:
+        - subnet: 172.18.18.0/24
+  intranet_a:
+    driver: macvlan
+    internal: true
+    ipam:
+      config:
+        - subnet: 10.1.0.0/16
+  intranet_b:
+    driver: macvlan
+    internal: true
+    ipam:
+      config:
+        - subnet: 10.2.0.0/16
+  cloud_network_s:
+    driver: macvlan
+    internal: true
+    ipam:
+      config:
+        - subnet: 10.3.0.0/16
