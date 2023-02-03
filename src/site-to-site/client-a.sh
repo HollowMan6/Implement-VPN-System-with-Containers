@@ -13,7 +13,7 @@ cp -r /apps/client_app /client_app
 cd /client_app
 FILE=node_modules.tar.xz
 if test -f "$FILE"; then
-    tar -xvf $FILE
+    tar -xf $FILE
     rm $FILE
 fi
 

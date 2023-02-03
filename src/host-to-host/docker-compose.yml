@@ -158,16 +158,14 @@ services:
 
   # Server S1
   server-s1:
-    build: .
-    image: vpntest/base
+    build: ./apps/server_app
+    image: vpntest/server
     hostname: server-s1
     container_name: server-s1
-    cap_add:
-      - NET_ADMIN
+    privileged: true
     volumes:
       - ./server-s1.sh:/start.sh
       - ./apps:/apps
-      # - /var/run/docker.sock:/var/run/docker.sock
     networks:
       cloud_network_s:
         # ipv4_address: 10.1.0.2

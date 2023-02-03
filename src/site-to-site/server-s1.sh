@@ -1,5 +1,5 @@
 #! /bin/bash
-# This script is run on router when it boots up
+# This script is run on server-s1 when it boots up
 
 ## Traffic going to the internet
 route add default gw 10.3.0.2

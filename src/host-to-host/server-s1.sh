@@ -1,5 +1,5 @@
-#! /bin/bash
-# This script is run on router when it boots up
+#! /bin/sh
+# This script is run on server-s1 when it boots up
 
 # Set up the network interface
 # cloud_network_s
@@ -17,12 +17,13 @@ cp -r /apps/server_app /server_app
 cd /server_app
 npm install
 
-node server.js
+## Start docker
+dockerd-entrypoint.sh &
+wait-on socket:/var/run/docker.sock
 
-# Forget about the docker as then actually it is projecting the host machine network.
-# ## Install docker
-# apt install docker.io -y
+## Start server
+docker run -p 30000:8080 -d --name s1 -v $PWD:/app -w /app node:16 node server.js
+docker run -p 30001:8080 -d --name s2 -v $PWD:/app -w /app node:16 node server.js
 
-# ## Start server
-# docker run -p 8080:8080 -d -v $PWD:/app -w /app node:12.22.9 node server.js
-# docker run -p 8080:8080 -d -v $PWD:/app -w /app node:12.22.9 node server.js
+docker logs s1 --tail=0 --follow &
+docker logs s2 --tail=0 --follow 

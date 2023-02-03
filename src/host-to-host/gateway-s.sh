@@ -122,12 +122,12 @@ cat > /etc/ipsec_updown.sh <<EOL
 #! /bin/sh
 case "\$PLUTO_VERB:\$1" in
 up-host:|up-client:)
-  iptables -t nat -A PREROUTING -i eth1 -p tcp -s 172.16.16.16 --dport 8080 -j DNAT --to-destination 10.1.0.2:8080
-  iptables -t nat -A PREROUTING -i eth1 -p tcp -s 172.18.18.18 --dport 8080 -j DNAT --to-destination 10.1.0.2:8080
+  iptables -t nat -A PREROUTING -i eth1 -p tcp -s 172.16.16.16 --dport 8080 -j DNAT --to-destination 10.1.0.2:30000
+  iptables -t nat -A PREROUTING -i eth1 -p tcp -s 172.18.18.18 --dport 8080 -j DNAT --to-destination 10.1.0.2:30001
   ;;
 down-host:|down-client:)
-  iptables -t nat -D PREROUTING -i eth1 -p tcp -s 172.16.16.16 --dport 8080 -j DNAT --to-destination 10.1.0.2:8080
-  iptables -t nat -D PREROUTING -i eth1 -p tcp -s 172.18.18.18 --dport 8080 -j DNAT --to-destination 10.1.0.2:8080
+  iptables -t nat -D PREROUTING -i eth1 -p tcp -s 172.16.16.16 --dport 8080 -j DNAT --to-destination 10.1.0.2:30000
+  iptables -t nat -D PREROUTING -i eth1 -p tcp -s 172.18.18.18 --dport 8080 -j DNAT --to-destination 10.1.0.2:30001
   ;;
 esac
 EOL
