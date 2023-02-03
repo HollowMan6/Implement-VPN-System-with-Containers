@@ -26,8 +26,8 @@ iptables -A OUTPUT -o eth1 -p esp -s 172.8.8.8 -d 172.7.7.7 -j ACCEPT
 iptables -A INPUT -j DROP
 iptables -A OUTPUT -j DROP
 
-## Stop internet traffic
-iptables -A FORWARD -j DROP
+# ## Stop internet traffic
+# iptables -A FORWARD -j DROP
 
 ## Save the iptables rules
 iptables-save > /etc/iptables/rules.v4
