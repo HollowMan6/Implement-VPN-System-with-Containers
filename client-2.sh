@@ -3,7 +3,7 @@
 
 # Set up the network interface
 # intranet_*
-ifconfig eth0 10.1.0.2 netmask 255.255.0.0 broadcast 10.1.255.255
+ifconfig eth0 10.1.0.3 netmask 255.255.0.0 broadcast 10.1.255.255
 
 ## Traffic going to the internet
 route add default gw 10.1.0.1
