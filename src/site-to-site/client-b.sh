@@ -11,11 +11,7 @@ ip6tables-save > /etc/iptables/rules.v6
 ## The app is pre-installed
 cp -r /apps/client_app /client_app
 cd /client_app
-FILE=node_modules.tar.xz
-if test -f "$FILE"; then
-    tar -xf $FILE
-    rm $FILE
-fi
+npm install
 
 cat > config.json <<EOL
 {
