@@ -18,7 +18,7 @@
 %==========================================================
 
 \begin{abstract}
-This paper investigates the possibilities of implementing a Virtual Private Network (VPN) System among containers.
+This paper investigates the possibilities of implementing a Virtual Private Network (VPN) system among containers.
 
 % TODO: Remove
 More content to be added when this essay finishes.
@@ -34,43 +34,104 @@ More content to be added when this essay finishes.
 
 \section{Introduction}
 
-In recent years, as more and more applications are going cloud, container technologies such as Docker have received much attention from industry and academia. Containers are much more efficient and lightweight than virtual machines because containers share the Linux Kernel with the host. In contrast, virtual machines employ hardware virtualization, which needs more resources. \cite{10.1145/2988336.2988337} Meanwhile, Virtual Private Networks (VPN) get popular because of the privacy needs and vulnerable networking environment for communications.
+In recent years, as an increasing number of applications have been moved to the cloud, container technologies such as Docker have received much attention from the industry and the academia. Containers are much more efficient and lightweight than virtual machines because containers share the Linux Kernel with the host. In contrast, virtual machines employ hardware virtualization and have their own instance of kernel, which needs more resources \cite{10.1145/2988336.2988337}.
 
-VPNs are typically used in complex networking environments with many different network components. It is still a common practice to build and test network systems using virtual machines, which leads to many problems. The problems can worsen when testing VPN systems, as each network component needs a virtual machine instance. Simultaneously running multiple virtual machine instances on one host machine to simulate the network environment can be memory-consuming, which significantly troubles low-end devices and CI/CD implementation. Moreover, as Mac M1 / M2 chips are based on arm64 architecture, open-source virtual machine hypervisors are not well supported for arm64 hardware virtualization as of this writing. However, arm64 is well supported by the containers. \cite{9852232}
+VPNs are typically used in complex networking environments with many different network components. It is still a common practice \cite{9151942} to build and test network systems using virtual machines, which can be slow and troublesome. The problems can worsen when testing VPN systems, as each network component needs a virtual machine instance. It can be memory-consuming to simultaneously run multiple virtual machine instances on one host machine to simulate the network environment, which significantly perplexes testers with low-end devices and continuous integration and continuous delivery (CI/CD), as these environments are usually low on memory. Moreover, as Mac M1 / M2 chips are based on arm64 architecture, open-source virtual machine hypervisors are not currently well supported for arm64 hardware virtualization. However, arm64 is well supported by the containers \cite{9852232}.
 
-As a result, this paper investigates the possibilities of implementing a VPN system based on containers to conquer the disadvantages of virtual machines.
+Due to little research on implementing network systems using containers, this paper investigates the possibilities of implementing a VPN system based on Docker containers to overcome the disadvantages of virtual machines as mentioned above. This paper also analyze the functional and security limitations when implemented in this way.
 
-This paper is organized as follows. Section 2 is a background review of current technologies used for container networking and VPN systems. Section 3 defines our goal for implementing the VPN system using containers, while Section 4 explains the details of our implementation. Then Section 5 presents our evaluation result by comparing the VPN system performance between the one implemented in the virtual machine and the one in the container. Finally, Section 6 provides the concluding remarks.
+This paper is organized as follows. Section 2 reviews the background of current technologies used for container networking and VPN systems. Section 3 defines our goal for implementing the VPN system using Docker containers, while Section 4 explains the details of our implementation. Section 5 presents our evaluation result by comparing the VPN system performance between the one implemented in the virtual machine and the one in the container. Finally, Section 6 provides the concluding remarks.
 
 %============================================================
 
 
-\section{Technology}
+\section{Docker Networking System}
+This section discusses the choice of the Docker container network driver for implementing the VPN system. It will also discuss how to enable routing and firewalls inside a container.
 
-NB: As the experiment has to be completed to determine the technology to use, I didn't write this part for draft 1.
+\subsection{Network Drivers}
+Docker employs a pluggable networking subsystem. Several drivers can provide the docker network functionality, and the default ones include bridge, host, overlay, IPVLAN, MacVLAN, and none. We can choose one of them to implement the VPN system.
 
-\subsection{Container Network}
+None, host, overlay drivers are not suitable for our scenario. Firstly, none driver disables all networking. Secondly, host driver is not necessary, as it can cause security implications due to its nature of sharing the same network stack with the host machine. In addition, overlay is not an appropriate option, as we are simulating the network system only on one host machine.
 
-\subsection{Virtual Private Network}
+As a result, our possible candidates are bridge, IPVLAN, and MacVLAN. When looking into the details, bridge learns MAC addresses by looking into the frames headers of the communicating hosts. At the same time, the MacVLAN is a trivial bridge that does not need to learn as it already knows every MAC address it can receive. IPVLAN is very similar to MacVLAN, except that MacVLAN assigns a different MAC address to each attached docker container. In contrast, IPVLAN assigns the same MAC address to all containers attached to it.
 
-To be added.
+Our final choice would be MacVLAN. As we will only use the driver to implement the internal network, there is no need to use advanced flood control and forwarding database manipulation that are specific to the bridge driver. Moreover, according to Docker's documentation related to networking \cite{docker_documentation_2023}, MacVLAN networks are the best choice when migrating from a VM setup, as MacVLAN makes the container appear as a physical device with its own MAC address. Besides, Gundall et al. \cite{9442123} conducts benchmarks for different virtualization technologies for networking overhead. The result shows that the MacVLAN driver has the best throughput while requiring the least CPU resources compared to other network drivers.
 
+\subsection{Routing and Firewall}
+
+Docker containers do not allow manipulating container network devices and setting routing tables or firewalls inside containers by default unless the net\_admin capability is assigned to the container.
+
+According to capabilities man page \cite{capabilities}, assigning the net\_admin capability to containers allows performing the following network-related operations:
+\begin{enumerate}
+\setlength{\itemsep}{0pt}
+\setlength{\parsep}{0pt}
+\setlength{\parskip}{0pt}
+\item Interface configuration;
+\item Administration of IP firewall, masquerading, and accounting;
+\item Modify routing tables;
+\item Bind to any address for transparent proxying;
+\item Set type-of-service (TOS);
+\item Clear driver statistics;
+\item Set promiscuous mode;
+\item Enabling multicasting;
+\item Use setsockopt(2) to set the following socket options:
+SO\_DEBUG, SO\_MARK, SO\_PRIORITY (for a priority outside the
+range 0 to 6), SO\_RCVBUFFORCE, and SO\_SNDBUFFORCE.
+\end{enumerate}
+
+As we are using the MacVLAN to build the internal network, all the network manipulations mentioned above only work for the network components that belong to the corresponding namespace. There should not exist any security implications to the host network if we give net\_admin capability to the container.
+
+%\subsection{IPv6}
 
 %============================================================
 
 
 \section{Goal}
 
-To be added.
+This paper simulates a scenario where the IoT devices (clients) in two sites A and B would like to connect to the server in the cloud S. The topology is based on the Aalto University CS-E4300 Network Security 2022-2023 instance Project 2 \cite{aura_peltonen_bui_2022}, where site A, site B and cloud S both use the private IP address to improve the security and save the IPv4 address. The gateway A, B and S connect the site A, site B and site S to the public Internet. The Router in the topology is a simplified version of Internet routers that routes across the Internet between the sites and the cloud. The address space between the gateway and the router simulates public, routable IPv4 addresses, even though it is actually private. site A, site B and cloud S all uses router to access the Internet.
 
+In order to make the clients in both site A and site B connect to the cloud server safely, this paper uses strongSwan, a VPN implementation based on the Internet Protocol Security (IPsec).
+
+We will try to implement two types of VPN: site-to-site and gateway-to-gateway.
+
+\subsection{Site to Site}
+\begin{figure}[t!]
+  \begin{center}
+    \includegraphics[width=1.1\textwidth]{figures/site-to-site.pdf}
+    \caption{Site to Site}
+    \label{fig:site2site}
+  \end{center}
+\end{figure}
+
+A site-to-site VPN connects different network systems located at different sites together directly. In this case, the address space of the site A, B and Cloud S shouldn't overlap with each other.
+
+Figure \ref{fig:site2site} shows the topology and corresponding address space under such circumstance.
+
+\subsection{Gateway to Gateway}
+\begin{figure}[t!]
+  \begin{center}
+    \includegraphics[width=1.1\textwidth]{figures/host-to-host.pdf}
+    \caption{Gateway to Gateway}
+    \label{fig:gateway2gateway}
+  \end{center}
+\end{figure}
+
+A gateway-to-gateway VPN connects different gateways together. The packages then get routed to different clients within the corresponding site according to the routing table of the gateway.
+
+Figure \ref{fig:gateway2gateway} shows the topology and corresponding address space under such circumstance.
 
 %============================================================
 
 
 \section{Implementation}
 
-To be added.
 
+
+\subsection{Site to Site}
+
+\subsection{Gateway to Gateway}
+
+IP address spoofing
 
 %============================================================
 

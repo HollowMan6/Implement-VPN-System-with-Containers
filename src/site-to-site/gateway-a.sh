@@ -2,7 +2,7 @@
 # This script is run on gateway-a when it boots up
 
 ## NAT traffic going to the internet
-route add default gw 172.6.6.2
+route add default gw 172.22.22.2
 iptables -t nat -A POSTROUTING -o eth1 -j MASQUERADE
 
 ## Bind the IP address of original local server to the interface
@@ -16,18 +16,18 @@ iptables -t nat -I POSTROUTING -d 10.3.0.3 -j ACCEPT
 
 ## Iptables rules (strict firewall)
 ### Accept IKE and esp traffic from/to the cloud
-iptables -A INPUT -i eth1 -p udp -s 172.7.7.7 --sport 500 -d 172.6.6.6 --dport 500 -j ACCEPT
-iptables -A INPUT -i eth1 -p udp -s 172.7.7.7 --sport 4500 -d 172.6.6.6 --dport 4500 -j ACCEPT
-iptables -A INPUT -i eth1 -p esp -s 172.7.7.7 -d 172.6.6.6 -j ACCEPT
-iptables -A OUTPUT -o eth1 -p udp -s 172.6.6.6 --sport 500 -d 172.7.7.7 --dport 500 -j ACCEPT
-iptables -A OUTPUT -o eth1 -p udp -s 172.6.6.6 --sport 4500 -d 172.7.7.7 --dport 4500 -j ACCEPT
-iptables -A OUTPUT -o eth1 -p esp -s 172.6.6.6 -d 172.7.7.7 -j ACCEPT
+iptables -A INPUT -i eth1 -p udp -s 172.24.24.24 --sport 500 -d 172.22.22.22 --dport 500 -j ACCEPT
+iptables -A INPUT -i eth1 -p udp -s 172.24.24.24 --sport 4500 -d 172.22.22.22 --dport 4500 -j ACCEPT
+iptables -A INPUT -i eth1 -p esp -s 172.24.24.24 -d 172.22.22.22 -j ACCEPT
+iptables -A OUTPUT -o eth1 -p udp -s 172.22.22.22 --sport 500 -d 172.24.24.24 --dport 500 -j ACCEPT
+iptables -A OUTPUT -o eth1 -p udp -s 172.22.22.22 --sport 4500 -d 172.24.24.24 --dport 4500 -j ACCEPT
+iptables -A OUTPUT -o eth1 -p esp -s 172.22.22.22 -d 172.24.24.24 -j ACCEPT
 ### Drop everything else (including Internet traffic)
 iptables -A INPUT -j DROP
 iptables -A OUTPUT -j DROP
 
-# ## Stop internet traffic
-# iptables -A FORWARD -j DROP
+## Stop internet traffic
+iptables -A FORWARD -j DROP
 
 ## Save the iptables rules
 iptables-save > /etc/iptables/rules.v4
@@ -122,16 +122,16 @@ conn a-to-cloud
         keyexchange=ikev2
         leftfirewall=yes
         rightfirewall=yes
-        left=172.6.6.6
+        left=172.22.22.22
         leftsubnet=10.1.0.0/16
-        leftid=172.6.6.6
+        leftid=172.22.22.22
         leftcert=siteACert.pem
-        leftid="C=FI, O=CSE4300, CN=CSE4300 Site A 172.6.6.6"
+        leftid="C=FI, O=CSE4300, CN=CSE4300 Site A 172.22.22.22"
         leftca="C=FI, O=CSE4300, CN=CSE4300 Root CA"
-        right=172.7.7.7
+        right=172.24.24.24
         rightsubnet=10.3.0.0/16
         rightcert=cloudCert.pem
-        rightid="C=FI, O=CSE4300, CN=CSE4300 Cloud 172.7.7.7"
+        rightid="C=FI, O=CSE4300, CN=CSE4300 Cloud 172.24.24.24"
         rightca="C=FI, O=CSE4300, CN=CSE4300 Root CA"
         ike=aes256gcm16-prfsha384-ecp384!
         esp=aes256gcm16-ecp384!

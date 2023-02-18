@@ -2,25 +2,25 @@
 # This script is run on gateway-s when it boots up
 
 ## Traffic going to the internet
-route add default gw 172.7.7.2
+route add default gw 172.24.24.2
 
 ## NAT Masquerade for eth1
 iptables -t nat -A POSTROUTING -o eth1 -j MASQUERADE
 
 ## Iptables rules (strict firewall)
 ### Accept IKE and esp traffic from/to the clients
-iptables -A INPUT -i eth1 -p udp -s 172.6.6.6 --sport 500 -d 172.7.7.7 --dport 500 -j ACCEPT
-iptables -A INPUT -i eth1 -p udp -s 172.6.6.6 --sport 4500 -d 172.7.7.7 --dport 4500 -j ACCEPT
-iptables -A INPUT -i eth1 -p esp -s 172.6.6.6 -d 172.7.7.7 -j ACCEPT
-iptables -A INPUT -i eth1 -p udp -s 172.8.8.8 --sport 500 -d 172.7.7.7 --dport 500 -j ACCEPT
-iptables -A INPUT -i eth1 -p udp -s 172.8.8.8 --sport 4500 -d 172.7.7.7 --dport 4500 -j ACCEPT
-iptables -A INPUT -i eth1 -p esp -s 172.8.8.8 -d 172.7.7.7 -j ACCEPT
-iptables -A OUTPUT -o eth1 -p udp -s 172.7.7.7 --sport 500 -d 172.6.6.6 --dport 500 -j ACCEPT
-iptables -A OUTPUT -o eth1 -p udp -s 172.7.7.7 --sport 4500 -d 172.6.6.6 --dport 4500 -j ACCEPT
-iptables -A OUTPUT -o eth1 -p esp -s 172.7.7.7 -d 172.6.6.6 -j ACCEPT
-iptables -A OUTPUT -o eth1 -p udp -s 172.7.7.7 --sport 500 -d 172.8.8.8 --dport 500 -j ACCEPT
-iptables -A OUTPUT -o eth1 -p udp -s 172.7.7.7 --sport 4500 -d 172.8.8.8 --dport 4500 -j ACCEPT
-iptables -A OUTPUT -o eth1 -p esp -s 172.7.7.7 -d 172.8.8.8 -j ACCEPT
+iptables -A INPUT -i eth1 -p udp -s 172.22.22.22 --sport 500 -d 172.24.24.24 --dport 500 -j ACCEPT
+iptables -A INPUT -i eth1 -p udp -s 172.22.22.22 --sport 4500 -d 172.24.24.24 --dport 4500 -j ACCEPT
+iptables -A INPUT -i eth1 -p esp -s 172.22.22.22 -d 172.24.24.24 -j ACCEPT
+iptables -A INPUT -i eth1 -p udp -s 172.23.23.23 --sport 500 -d 172.24.24.24 --dport 500 -j ACCEPT
+iptables -A INPUT -i eth1 -p udp -s 172.23.23.23 --sport 4500 -d 172.24.24.24 --dport 4500 -j ACCEPT
+iptables -A INPUT -i eth1 -p esp -s 172.23.23.23 -d 172.24.24.24 -j ACCEPT
+iptables -A OUTPUT -o eth1 -p udp -s 172.24.24.24 --sport 500 -d 172.22.22.22 --dport 500 -j ACCEPT
+iptables -A OUTPUT -o eth1 -p udp -s 172.24.24.24 --sport 4500 -d 172.22.22.22 --dport 4500 -j ACCEPT
+iptables -A OUTPUT -o eth1 -p esp -s 172.24.24.24 -d 172.22.22.22 -j ACCEPT
+iptables -A OUTPUT -o eth1 -p udp -s 172.24.24.24 --sport 500 -d 172.23.23.23 --dport 500 -j ACCEPT
+iptables -A OUTPUT -o eth1 -p udp -s 172.24.24.24 --sport 4500 -d 172.23.23.23 --dport 4500 -j ACCEPT
+iptables -A OUTPUT -o eth1 -p esp -s 172.24.24.24 -d 172.23.23.23 -j ACCEPT
 ### Drop everything else (including Internet traffic)
 iptables -A INPUT -j DROP
 iptables -A OUTPUT -j DROP
@@ -134,10 +134,10 @@ conn %default
         keyexchange=ikev2
         leftfirewall=yes
         rightfirewall=yes
-        left=172.7.7.7
+        left=172.24.24.24
         leftsubnet=10.3.0.0/16
         leftcert=cloudCert.pem
-        leftid="C=FI, O=CSE4300, CN=CSE4300 Cloud 172.7.7.7"
+        leftid="C=FI, O=CSE4300, CN=CSE4300 Cloud 172.24.24.24"
         leftca="C=FI, O=CSE4300, CN=CSE4300 Root CA"
         rightca="C=FI, O=CSE4300, CN=CSE4300 Root CA"
         ike=aes256gcm16-prfsha384-ecp384!
@@ -146,16 +146,16 @@ conn %default
         dpdaction=hold
 conn cloud-to-a
         also=%default
-        right=172.6.6.6
+        right=172.22.22.22
         rightsubnet=10.1.0.0/16
         rightcert=siteACert.pem
-        rightid="C=FI, O=CSE4300, CN=CSE4300 Site A 172.6.6.6"
+        rightid="C=FI, O=CSE4300, CN=CSE4300 Site A 172.22.22.22"
 conn cloud-to-b
         also=%default
-        right=172.8.8.8
+        right=172.23.23.23
         rightsubnet=10.2.0.0/16
         rightcert=siteBCert.pem
-        rightid="C=FI, O=CSE4300, CN=CSE4300 Site B 172.8.8.8"
+        rightid="C=FI, O=CSE4300, CN=CSE4300 Site B 172.23.23.23"
 EOL
 
 ## Start ipsec for updates to take effect

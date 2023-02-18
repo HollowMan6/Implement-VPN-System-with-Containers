@@ -20,8 +20,8 @@ pki --issue --cacert cacerts/caCert.pem --cakey caKey.pem --digest sha512 \
 # Site a
 pki --gen --type ecdsa --outform pem > private/siteAKey.pem
 pki --req --type priv --in private/siteAKey.pem \
-          --dn "C=FI, O=CSE4300, CN=CSE4300 Site A 172.6.6.6" \
-          --san 172.6.6.6 --outform pem > reqs/siteAReq.pem
+          --dn "C=FI, O=CSE4300, CN=CSE4300 Site A 172.22.22.22" \
+          --san 172.22.22.22 --outform pem > reqs/siteAReq.pem
 pki --issue --cacert cacerts/intCaCert.pem --cakey intCaKey.pem \
             --type pkcs10 --in reqs/siteAReq.pem --lifetime 913 \
             --outform pem --flag clientAuth --digest sha512 > certs/siteACert.pem
@@ -29,8 +29,8 @@ pki --issue --cacert cacerts/intCaCert.pem --cakey intCaKey.pem \
 # Site b
 pki --gen --type ecdsa --outform pem > private/siteBKey.pem
 pki --req --type priv --in private/siteBKey.pem \
-          --dn "C=FI, O=CSE4300, CN=CSE4300 Site B 172.8.8.8" \
-          --san 172.8.8.8 --outform pem > reqs/siteBReq.pem
+          --dn "C=FI, O=CSE4300, CN=CSE4300 Site B 172.23.23.23" \
+          --san 172.23.23.23 --outform pem > reqs/siteBReq.pem
 pki --issue --cacert cacerts/intCaCert.pem --cakey intCaKey.pem \
             --type pkcs10 --in reqs/siteBReq.pem --lifetime 913 \
             --outform pem --flag clientAuth --digest sha512 > certs/siteBCert.pem
@@ -38,8 +38,8 @@ pki --issue --cacert cacerts/intCaCert.pem --cakey intCaKey.pem \
 # Cloud
 pki --gen --type ecdsa --outform pem > private/cloudKey.pem
 pki --req --type priv --in private/cloudKey.pem \
-          --dn "C=FI, O=CSE4300, CN=CSE4300 Cloud 172.7.7.7" \
-          --san 172.7.7.7 --outform pem > reqs/cloudReq.pem
+          --dn "C=FI, O=CSE4300, CN=CSE4300 Cloud 172.24.24.24" \
+          --san 172.24.24.24 --outform pem > reqs/cloudReq.pem
 pki --issue --cacert cacerts/intCaCert.pem --cakey intCaKey.pem \
             --type pkcs10 --in reqs/cloudReq.pem --lifetime 913 \
             --outform pem --flag serverAuth --digest sha512 > certs/cloudCert.pem
