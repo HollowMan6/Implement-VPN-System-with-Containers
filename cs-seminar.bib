@@ -47,8 +47,6 @@ location = {Trento, Italy},
 series = {Middleware '16}
 }
 
-
-
 @ARTICLE{9852232,
   author={Kaiser, Shahidullah and Haq, Md. Sadun and Tosun, Ali Şaman and Korkmaz, Turgay},
   journal={IEEE Access}, 
@@ -73,7 +71,9 @@ series = {Middleware '16}
  title={Networking overview, Docker Documentation},
  url={https://docs.docker.com/network/},
  year={2023},
- month={February}} 
+ month={February},
+ author={Docker contributors}
+ } 
 
 @INPROCEEDINGS{9442123,
   author={Gundall, Michael and Reti, Daniel and Schotten, Hans D.},
@@ -85,17 +85,39 @@ series = {Middleware '16}
   pages={283-290},
   doi={10.1109/INDIN45582.2020.9442123}}
 
-@book{rosen2014linux,
-  title={Linux kernel networking: Implementation and theory},
-  author={Rosen, Rami},
-  year={2014},
-  publisher={Apress}
+@INPROCEEDINGS{7502883,
+  author={Claassen, Joris and Koning, Ralph and Grosso, Paola},
+  booktitle={NOMS 2016 - 2016 IEEE/IFIP Network Operations and Management Symposium}, 
+  title={Linux containers networking: Performance and scalability of kernel modules}, 
+  year={2016},
+  volume={},
+  number={},
+  pages={713-717},
+  doi={10.1109/NOMS.2016.7502883}}
+
+@INPROCEEDINGS{9022848,
+  author={Aung, Si Thu and Thein, Thandar},
+  booktitle={2020 IEEE Conference on Computer Applications(ICCA)}, 
+  title={Comparative Analysis of Site-to-Site Layer 2 Virtual Private Networks}, 
+  year={2020},
+  volume={},
+  number={},
+  pages={1-5},
+  doi={10.1109/ICCA49400.2020.9022848}}
+
+@inproceedings{dulany2006performance,
+  title={A Performance Analysis of Gateway-to-Gateway VPN on the Linux Platform},
+  author={Dulany, Peter and Kim, Chang Soo and James, T Yu},
+  booktitle={CTIRS/MSEC Conference},
+  volume={789787787},
+  year={2006}
 }
 
 @manual{capabilities,
  title={capabilities(7) Linux User's Manual},
  year={2023},
  month={February},
+ author={Linux contributors}
 }
 
  @misc{aura_peltonen_bui_2022,
@@ -103,9 +125,33 @@ series = {Middleware '16}
  url={https://github.com/tuomaura/cs-e4300_testbed},
  publisher={GitHub},
  author={Aura, Tuomas and Peltonen, Aleksi and Bui, Thanh},
+ organization={Aalto University},
  year={2022},
  month={Dec}} 
- 
+
+@misc{docker,
+url={https://hub.docker.com/_/docker},
+title={Docker Hub | Docker-in-Docker image README},
+year={2023},
+month={February},
+journal={Docker},
+author={Docker contributors}
+}
+
+@article{AKYILDIZ2023100695,
+title = {A P4-assisted task offloading scheme for Fog networks: An intelligent transportation system scenario},
+journal = {Internet of Things},
+volume = {22},
+pages = {100695},
+year = {2023},
+issn = {2542-6605},
+doi = {https://doi.org/10.1016/j.iot.2023.100695},
+url = {https://www.sciencedirect.com/science/article/pii/S2542660523000185},
+author = {Oğuzhan Akyıldız and İbrahim Kök and Feyza Yıldırım Okay and Suat Özdemir},
+keywords = {IoT, Fog computing, Task offloading, SDN, P4, Intelligent transportation system},
+abstract = {In Fog-based Internet of Things (IoT) networks, Fog computing offers great promises to achieve efficient task processing among IoT devices and the Cloud with lower processing delay and a lighter bandwidth burden. However, the sustainability of these networks is critical so that Fog servers efficiently allocate/offload increasing task types to appropriate resources. In this paper, a novel task offloading scheme called Task Offloading Scheme with P4 (TOS-P4) is proposed for Fog-based IoT networks using Programming Protocol-independent Packet Processors (P4) technology. The proposed scheme is evaluated through an Intelligent Transportation System (ITS) application scenario and compared to a conventional model called Task Offloading Scheme with Software-Defined Networking controller (TOS-SDN). In this scenario, the network traffic is regulated by P4, allowing task offload decisions to be more flexible and programmable according to server loads and predetermined forwarding rules. We present the applicability of the proposed task offloading scheme in the Fog-based IoT network and its benefits to network performance in terms of latency and computation overhead. According to the experimental results, when the servers’ load status is measured at 5 s intervals, TOS-P4 is 6.54 times more efficient than TOS-SDN in waiting times of tasks received at Resource Poor (RP) Fog servers. Also, in TOS-SDN case, the average waiting time of a task on RP Fog servers is 30 times more compared to Resource Rich (RR) Fog servers.}
+}
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % The most common BiBTeX entry types
 %
