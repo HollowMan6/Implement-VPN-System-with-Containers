@@ -34,8 +34,8 @@ ip6tables -A OUTPUT -p icmpv6 -j ACCEPT
 ip6tables -A INPUT -j DROP
 ip6tables -A OUTPUT -j DROP
 
-## Stop internet traffic
-ip6tables -A FORWARD -j DROP
+# ## Stop internet traffic
+# ip6tables -A FORWARD -j DROP
 
 ## Save the iptables rules
 iptables-save > /etc/iptables/rules.v4
