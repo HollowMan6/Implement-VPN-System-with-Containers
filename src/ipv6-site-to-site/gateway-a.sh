@@ -25,9 +25,11 @@ ip6tables -t nat -I POSTROUTING -d fc00:4300:c::3 -j ACCEPT
 ip6tables -A INPUT -i eth1 -p udp -s fc00:4300:aaec::aaec --sport 500 -d fc00:4300:aaea::aaea --dport 500 -j ACCEPT
 ip6tables -A INPUT -i eth1 -p udp -s fc00:4300:aaec::aaec --sport 4500 -d fc00:4300:aaea::aaea --dport 4500 -j ACCEPT
 ip6tables -A INPUT -i eth1 -p esp -s fc00:4300:aaec::aaec -d fc00:4300:aaea::aaea -j ACCEPT
+ip6tables -A INPUT -p icmpv6 -j ACCEPT
 ip6tables -A OUTPUT -o eth1 -p udp -s fc00:4300:aaea::aaea --sport 500 -d fc00:4300:aaec::aaec --dport 500 -j ACCEPT
 ip6tables -A OUTPUT -o eth1 -p udp -s fc00:4300:aaea::aaea --sport 4500 -d fc00:4300:aaec::aaec --dport 4500 -j ACCEPT
 ip6tables -A OUTPUT -o eth1 -p esp -s fc00:4300:aaea::aaea -d fc00:4300:aaec::aaec -j ACCEPT
+ip6tables -A OUTPUT -p icmpv6 -j ACCEPT
 ### Drop everything else (including Internet traffic)
 ip6tables -A INPUT -j DROP
 ip6tables -A OUTPUT -j DROP
@@ -130,13 +132,13 @@ conn a-to-cloud
         leftfirewall=yes
         rightfirewall=yes
         left=fc00:4300:aaea::aaea
-        leftsubnet=fc00:4300:a::0/64
+        leftsubnet=fc00:4300:a::/64
         leftid=fc00:4300:aaea::aaea
         leftcert=siteACert.pem
         leftid="C=FI, O=CSE4300, CN=CSE4300 Site A fc00:4300:aaea::aaea"
         leftca="C=FI, O=CSE4300, CN=CSE4300 Root CA"
         right=fc00:4300:aaec::aaec
-        rightsubnet=fc00:4300:c::0/64
+        rightsubnet=fc00:4300:c::/64
         rightcert=cloudCert.pem
         rightid="C=FI, O=CSE4300, CN=CSE4300 Cloud fc00:4300:aaec::aaec"
         rightca="C=FI, O=CSE4300, CN=CSE4300 Root CA"

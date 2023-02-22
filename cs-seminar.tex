@@ -78,7 +78,8 @@ range 0 to 6), SO\_RCVBUFFORCE, and SO\_SNDBUFFORCE.
 
 As we are using the MacVLAN to build the internal network, all the network manipulations mentioned above only work for the network components that belong to the corresponding namespace. There should not exist any security implications to the host network if we give net\_admin capability to the container.
 
-%\subsection{IPv6}
+\subsection{IPv6}
+There is a way for configuring IPv6 networking in Docker \cite{docker_documentation_ipv6_2023}. However, it is only supported on Docker daemons running on Linux hosts and it does not support Docker Desktop.
 
 %============================================================
 
@@ -117,6 +118,19 @@ A gateway-to-gateway VPN connects different gateways. The packages then get rout
 
 Figure \ref{fig:gateway2gateway} shows the topology and corresponding address space under such circumstances.
 
+\subsection{Site to Site in IPv6}
+\begin{figure}[t!]
+  \begin{center}
+    \includegraphics{figures/ipv6-site-to-site.pdf}
+    \caption{Site to Site in IPv6}
+    \label{fig:ipv6site2site}
+  \end{center}
+\end{figure}
+
+Similar to Site to Site VPN in IPv4, but replace all the address space into IPv6.
+
+Figure \ref{fig:ipv6site2site} shows the topology and corresponding address space under such circumstances.
+
 %============================================================
 
 
@@ -148,8 +162,11 @@ We resolve the overlapping address space issue relatively hackingly, similar to 
 
 In addition, for server S1, we use the Docker-in-Docker image to run docker containers inside the server S1 container. Running that image requires the container to be privileged according to the documentation \cite{docker}. As a result, in practice, we must ensure the software running in server S1 is benign and poses no risk to the host machine. Otherwise, it is generally not recommended to run the Docker-in-Docker image.
 
-%============================================================
+\subsection{Site to Site in IPv6}
 
+Similar to Site to Site VPN in IPv4, just replace all the IPv4 address into IPv6 would complete the job.
+
+%============================================================
 
 \section{Evaluation}
 
@@ -161,7 +178,9 @@ The container solution dramatically reduces memory consumption when we start the
 
 The shell script for making all the related routing and firewall configurations in Docker containers and VMs are identical, so it is easy to migrate configurations from the VMs to the docker containers. We can simultaneously start the site-to-site VPN setup and the gateway-to-gateway VPN setup in Docker without interfering.
 
-Most importantly, our setup can run in M1/M2 based Mac OS easily with docker desktop, while the VM ones fail to start.
+We also verify that the command "ls /sys/devices/virtual/net -l" shows complete different results when executing from the host machine and inside the container.
+
+Most importantly, our IPv4 setup can run in M1/M2 based Mac OS easily with docker desktop, while the VM ones fail to start.
 
 %============================================================
 

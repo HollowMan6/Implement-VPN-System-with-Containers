@@ -221,39 +221,39 @@ networks:
     internal: true
     ipam:
       config:
-        - subnet: fc00:4300:aaec::0/64
+        - subnet: fc00:4300:aaec::/64
   isp_link_a:
     driver: macvlan
     enable_ipv6: true
     internal: true
     ipam:
       config:
-        - subnet: fc00:4300:aaea::0/64
+        - subnet: fc00:4300:aaea::/64
   isp_link_b:
     driver: macvlan
     enable_ipv6: true
     internal: true
     ipam:
       config:
-        - subnet: fc00:4300:aaeb::0/64
+        - subnet: fc00:4300:aaeb::/64
   intranet_a:
     driver: macvlan
     enable_ipv6: true
     internal: true
     ipam:
       config:
-        - subnet: fc00:4300:a::0/64
+        - subnet: fc00:4300:a::/64
   intranet_b:
     driver: macvlan
     enable_ipv6: true
     internal: true
     ipam:
       config:
-        - subnet: fc00:4300:b::0/64
+        - subnet: fc00:4300:b::/64
   cloud_network_s:
     driver: macvlan
     enable_ipv6: true
     internal: true
     ipam:
       config:
-        - subnet: fc00:4300:c::0/64
+        - subnet: fc00:4300:c::/64

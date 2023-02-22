@@ -25,12 +25,14 @@ ip6tables -A INPUT -i eth1 -p esp -s fc00:4300:aaea::aaea -d fc00:4300:aaec::aae
 ip6tables -A INPUT -i eth1 -p udp -s fc00:4300:aaeb::aaeb --sport 500 -d fc00:4300:aaec::aaec --dport 500 -j ACCEPT
 ip6tables -A INPUT -i eth1 -p udp -s fc00:4300:aaeb::aaeb --sport 4500 -d fc00:4300:aaec::aaec --dport 4500 -j ACCEPT
 ip6tables -A INPUT -i eth1 -p esp -s fc00:4300:aaeb::aaeb -d fc00:4300:aaec::aaec -j ACCEPT
+ip6tables -A INPUT -p icmpv6 -j ACCEPT
 ip6tables -A OUTPUT -o eth1 -p udp -s fc00:4300:aaec::aaec --sport 500 -d fc00:4300:aaea::aaea --dport 500 -j ACCEPT
 ip6tables -A OUTPUT -o eth1 -p udp -s fc00:4300:aaec::aaec --sport 4500 -d fc00:4300:aaea::aaea --dport 4500 -j ACCEPT
 ip6tables -A OUTPUT -o eth1 -p esp -s fc00:4300:aaec::aaec -d fc00:4300:aaea::aaea -j ACCEPT
 ip6tables -A OUTPUT -o eth1 -p udp -s fc00:4300:aaec::aaec --sport 500 -d fc00:4300:aaeb::aaeb --dport 500 -j ACCEPT
 ip6tables -A OUTPUT -o eth1 -p udp -s fc00:4300:aaec::aaec --sport 4500 -d fc00:4300:aaeb::aaeb --dport 4500 -j ACCEPT
 ip6tables -A OUTPUT -o eth1 -p esp -s fc00:4300:aaec::aaec -d fc00:4300:aaeb::aaeb -j ACCEPT
+ip6tables -A OUTPUT -p icmpv6 -j ACCEPT
 ### Drop everything else (including Internet traffic)
 ip6tables -A INPUT -j DROP
 ip6tables -A OUTPUT -j DROP
@@ -146,7 +148,7 @@ conn %default
         leftfirewall=yes
         rightfirewall=yes
         left=fc00:4300:aaec::aaec
-        leftsubnet=fc00:4300:c::0/64
+        leftsubnet=fc00:4300:c::/64
         leftcert=cloudCert.pem
         leftid="C=FI, O=CSE4300, CN=CSE4300 Cloud fc00:4300:aaec::aaec"
         leftca="C=FI, O=CSE4300, CN=CSE4300 Root CA"
@@ -158,13 +160,13 @@ conn %default
 conn cloud-to-a
         also=%default
         right=fc00:4300:aaea::aaea
-        rightsubnet=fc00:4300:a::0/64
+        rightsubnet=fc00:4300:a::/64
         rightcert=siteACert.pem
         rightid="C=FI, O=CSE4300, CN=CSE4300 Site A fc00:4300:aaea::aaea"
 conn cloud-to-b
         also=%default
         right=fc00:4300:aaeb::aaeb
-        rightsubnet=fc00:4300:b::0/64
+        rightsubnet=fc00:4300:b::/64
         rightcert=siteBCert.pem
         rightid="C=FI, O=CSE4300, CN=CSE4300 Site B fc00:4300:aaeb::aaeb"
 EOL
