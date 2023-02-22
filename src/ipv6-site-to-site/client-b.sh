@@ -1,8 +1,12 @@
 #! /bin/bash
 # This script is run on client-b* when it boots up
 
+## Disable IPv4
+# intranet_b
+ip -4 addr flush dev eth0
+
 ## Traffic going to the internet
-route add default gw 10.2.0.2
+route -6 add default gw fc00:4300:b::2
 
 ## Save the iptables rules
 iptables-save > /etc/iptables/rules.v4
@@ -19,7 +23,7 @@ fi
 
 cat > config.json <<EOL
 {
-  "server_ip": "10.2.0.99",
+  "server_ip": "fc00:4300:b::99",
   "server_port": "8080",
   "log_file": "/var/log/client.log"
 }

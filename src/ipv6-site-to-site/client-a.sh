@@ -1,8 +1,12 @@
 #! /bin/bash
-# This script is run on client-b* when it boots up
+# This script is run on client-a* when it boots up
+
+## Disable IPv4
+# intranet_a
+ip -4 addr flush dev eth0
 
 ## Traffic going to the internet
-route add default gw 10.2.0.2
+route -6 add default gw fc00:4300:a::2
 
 ## Save the iptables rules
 iptables-save > /etc/iptables/rules.v4
@@ -16,14 +20,6 @@ if test -f "$FILE"; then
     tar -xf $FILE
     rm $FILE
 fi
-
-cat > config.json <<EOL
-{
-  "server_ip": "10.2.0.99",
-  "server_port": "8080",
-  "log_file": "/var/log/client.log"
-}
-EOL
 
 # Prevent the container from exiting
 while true; do

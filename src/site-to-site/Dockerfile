@@ -12,15 +12,6 @@ RUN apt-get -y dist-upgrade
 # Install tools for networking
 RUN apt-get install -y dialog debconf-utils apt-utils iputils-ping iptables iputils-tracepath traceroute netcat conntrack nmap wget rsync iptables-persistent > /dev/null
 
-# Enable ipv4 forwarding
-RUN echo "net.ipv4.ip_forward=1" >> /etc/sysctl.conf
-# Other ipsec settings
-RUN echo "net.ipv6.conf.all.forwarding = 1" >> /etc/sysctl.conf
-RUN echo "net.ipv4.conf.all.accept_redirects = 0" >> /etc/sysctl.conf
-RUN echo "net.ipv4.conf.all.send_redirects = 0" >> /etc/sysctl.conf
-
-RUN sysctl -p /etc/sysctl.conf
-
 # Install IPsec tools
 RUN apt-get install -y strongswan moreutils libstrongswan-extra-plugins > /dev/null
 

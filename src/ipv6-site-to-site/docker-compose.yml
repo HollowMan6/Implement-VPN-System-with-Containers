@@ -10,7 +10,7 @@ services:
     build: .
     image: vpntest/base
     hostname: router
-    container_name: srouter
+    container_name: s6router
     sysctls:
       # Enable ipv4/ipv6 forwarding
       - net.ipv4.ip_forward=1
@@ -24,13 +24,13 @@ services:
       default:
       # Interface towards Gateway S
       isp_link_s:
-        ipv4_address: 172.24.24.2
+        ipv6_address: fc00:4300:aaec::2
       # Interface towards Gateway A
       isp_link_a:
-        ipv4_address: 172.22.22.2
+        ipv6_address: fc00:4300:aaea::2
       # Interface towards Gateway B
       isp_link_b:
-        ipv4_address: 172.23.23.2
+        ipv6_address: fc00:4300:aaeb::2
 
   #######################
   ## Customer site A   ##
@@ -41,7 +41,7 @@ services:
     build: .
     image: vpntest/base
     hostname: gateway-a
-    container_name: sgateway-a
+    container_name: s6gateway-a
     sysctls:
       # Enable ipv4/ipv6 forwarding
       - net.ipv4.ip_forward=1
@@ -56,16 +56,16 @@ services:
     networks:
       # Interface towards router
       isp_link_a:
-        ipv4_address: 172.22.22.22
+        ipv6_address: fc00:4300:aaea::aaea
       # Interface towards customer site network
       intranet_a:
-        ipv4_address: 10.1.0.2
+        ipv6_address: fc00:4300:a::2
   # Client A1
   client-a1:
     build: .
     image: vpntest/base
     hostname: client-a1
-    container_name: sclient-a1
+    container_name: s6client-a1
     sysctls:
       # Enable ipv4/ipv6 forwarding
       - net.ipv4.ip_forward=1
@@ -77,14 +77,14 @@ services:
       - ./apps:/apps
     networks:
       intranet_a:
-        ipv4_address: 10.1.0.3
+        ipv6_address: fc00:4300:a::3
 
   # Client A2
   client-a2:
     build: .
     image: vpntest/base
     hostname: client-a2
-    container_name: sclient-a2
+    container_name: s6client-a2
     sysctls:
       # Enable ipv4/ipv6 forwarding
       - net.ipv4.ip_forward=1
@@ -96,7 +96,7 @@ services:
       - ./apps:/apps
     networks:
       intranet_a:
-        ipv4_address: 10.1.0.4
+        ipv6_address: fc00:4300:a::4
 
   #######################
   ## Customer site B   ##
@@ -107,7 +107,7 @@ services:
     build: .
     image: vpntest/base
     hostname: gateway-b
-    container_name: sgateway-b
+    container_name: s6gateway-b
     sysctls:
       # Enable ipv4/ipv6 forwarding
       - net.ipv4.ip_forward=1
@@ -122,17 +122,17 @@ services:
     networks:
       # Interface towards router
       isp_link_b:
-        ipv4_address: 172.23.23.23
+        ipv6_address: fc00:4300:aaeb::aaeb
       # Interface towards customer site network
       intranet_b:
-        ipv4_address: 10.2.0.2
+        ipv6_address: fc00:4300:b::2
 
   # Client B1
   client-b1:
     build: .
     image: vpntest/base
     hostname: client-b1
-    container_name: sclient-b1
+    container_name: s6client-b1
     sysctls:
       # Enable ipv4/ipv6 forwarding
       - net.ipv4.ip_forward=1
@@ -144,14 +144,14 @@ services:
       - ./apps:/apps
     networks:
       intranet_b:
-        ipv4_address: 10.2.0.3
+        ipv6_address: fc00:4300:b::3
 
   # Client B2
   client-b2:
     build: .
     image: vpntest/base
     hostname: client-b2
-    container_name: sclient-b2
+    container_name: s6client-b2
     sysctls:
       # Enable ipv4/ipv6 forwarding
       - net.ipv4.ip_forward=1
@@ -163,7 +163,7 @@ services:
       - ./apps:/apps
     networks:
       intranet_b:
-        ipv4_address: 10.2.0.4
+        ipv6_address: fc00:4300:b::4
 
   ##########################
   # Cloud network S       ##
@@ -174,7 +174,7 @@ services:
     build: .
     image: vpntest/base
     hostname: gateway-s
-    container_name: sgateway-s
+    container_name: s6gateway-s
     sysctls:
       # Enable ipv4/ipv6 forwarding
       - net.ipv4.ip_forward=1
@@ -189,17 +189,17 @@ services:
     networks:
       # Interface towards router
       isp_link_s:
-        ipv4_address: 172.24.24.24
+        ipv6_address: fc00:4300:aaec::aaec
       # Interface towards customer site network
       cloud_network_s:
-        ipv4_address: 10.3.0.2
+        ipv6_address: fc00:4300:c::2
 
   # Server S1
   server-s1:
     build: .
     image: vpntest/base
     hostname: server-s1
-    container_name: sserver-s1
+    container_name: s6server-s1
     sysctls:
       # Enable ipv4/ipv6 forwarding
       - net.ipv4.ip_forward=1
@@ -212,42 +212,48 @@ services:
       # - /var/run/docker.sock:/var/run/docker.sock
     networks:
       cloud_network_s:
-        ipv4_address: 10.3.0.3
+        ipv6_address: fc00:4300:c::3
 
 networks:
   isp_link_s:
     driver: macvlan
+    enable_ipv6: true
     internal: true
     ipam:
       config:
-        - subnet: 172.24.24.0/24
+        - subnet: fc00:4300:aaec::0/64
   isp_link_a:
     driver: macvlan
+    enable_ipv6: true
     internal: true
     ipam:
       config:
-        - subnet: 172.22.22.0/24
+        - subnet: fc00:4300:aaea::0/64
   isp_link_b:
     driver: macvlan
+    enable_ipv6: true
     internal: true
     ipam:
       config:
-        - subnet: 172.23.23.0/24
+        - subnet: fc00:4300:aaeb::0/64
   intranet_a:
     driver: macvlan
+    enable_ipv6: true
     internal: true
     ipam:
       config:
-        - subnet: 10.1.0.0/16
+        - subnet: fc00:4300:a::0/64
   intranet_b:
     driver: macvlan
+    enable_ipv6: true
     internal: true
     ipam:
       config:
-        - subnet: 10.2.0.0/16
+        - subnet: fc00:4300:b::0/64
   cloud_network_s:
     driver: macvlan
+    enable_ipv6: true
     internal: true
     ipam:
       config:
-        - subnet: 10.3.0.0/16
+        - subnet: fc00:4300:c::0/64

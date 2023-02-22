@@ -11,6 +11,10 @@ services:
     image: vpntest/base
     hostname: router
     container_name: router
+    sysctls:
+      # Enable ipv4/ipv6 forwarding
+      - net.ipv4.ip_forward=1
+      - net.ipv6.conf.all.forwarding=1
     cap_add:
       - NET_ADMIN
     volumes:
@@ -38,11 +42,17 @@ services:
     image: vpntest/base
     hostname: gateway-a
     container_name: gateway-a
+    sysctls:
+      # Enable ipv4/ipv6 forwarding
+      - net.ipv4.ip_forward=1
+      - net.ipv6.conf.all.forwarding=1
     cap_add:
       - NET_ADMIN
     volumes:
       - ./gateway-a.sh:/start.sh
       - ./crls:/crls
+      # # Log to host /var/log/syslog
+      # - /dev/log:/dev/log
     networks:
       # Interface towards router
       isp_link_a:
@@ -56,6 +66,10 @@ services:
     image: vpntest/base
     hostname: client-a1
     container_name: client-a1
+    sysctls:
+      # Enable ipv4/ipv6 forwarding
+      - net.ipv4.ip_forward=1
+      - net.ipv6.conf.all.forwarding=1
     cap_add:
       - NET_ADMIN
     volumes:
@@ -71,6 +85,10 @@ services:
     image: vpntest/base
     hostname: client-a2
     container_name: client-a2
+    sysctls:
+      # Enable ipv4/ipv6 forwarding
+      - net.ipv4.ip_forward=1
+      - net.ipv6.conf.all.forwarding=1
     cap_add:
       - NET_ADMIN
     volumes:
@@ -90,11 +108,17 @@ services:
     image: vpntest/base
     hostname: gateway-b
     container_name: gateway-b
+    sysctls:
+      # Enable ipv4/ipv6 forwarding
+      - net.ipv4.ip_forward=1
+      - net.ipv6.conf.all.forwarding=1
     cap_add:
       - NET_ADMIN
     volumes:
       - ./gateway-b.sh:/start.sh
       - ./crls:/crls
+      # # Log to host /var/log/syslog
+      # - /dev/log:/dev/log
     networks:
       # Interface towards router
       isp_link_b:
@@ -109,6 +133,10 @@ services:
     image: vpntest/base
     hostname: client-b1
     container_name: client-b1
+    sysctls:
+      # Enable ipv4/ipv6 forwarding
+      - net.ipv4.ip_forward=1
+      - net.ipv6.conf.all.forwarding=1
     cap_add:
       - NET_ADMIN
     volumes:
@@ -124,6 +152,10 @@ services:
     image: vpntest/base
     hostname: client-b2
     container_name: client-b2
+    sysctls:
+      # Enable ipv4/ipv6 forwarding
+      - net.ipv4.ip_forward=1
+      - net.ipv6.conf.all.forwarding=1
     cap_add:
       - NET_ADMIN
     volumes:
@@ -143,11 +175,17 @@ services:
     image: vpntest/base
     hostname: gateway-s
     container_name: gateway-s
+    sysctls:
+      # Enable ipv4/ipv6 forwarding
+      - net.ipv4.ip_forward=1
+      - net.ipv6.conf.all.forwarding=1
     cap_add:
       - NET_ADMIN
     volumes:
       - ./gateway-s.sh:/start.sh
       - ./crls:/crls
+      # # Log to host /var/log/syslog
+      # - /dev/log:/dev/log
     networks:
       # Interface towards router
       isp_link_s:
@@ -162,6 +200,10 @@ services:
     image: vpntest/server
     hostname: server-s1
     container_name: server-s1
+    sysctls:
+      # Enable ipv4/ipv6 forwarding
+      - net.ipv4.ip_forward=1
+      - net.ipv6.conf.all.forwarding=1
     privileged: true
     volumes:
       - ./server-s1.sh:/start.sh
