@@ -36,6 +36,8 @@ ip6tables -A OUTPUT -p icmpv6 -j ACCEPT
 ### Drop everything else (including Internet traffic)
 ip6tables -A INPUT -j DROP
 ip6tables -A OUTPUT -j DROP
+iptables -A INPUT -j DROP
+iptables -A OUTPUT -j DROP
 
 ## Save the iptables rules
 iptables-save > /etc/iptables/rules.v4

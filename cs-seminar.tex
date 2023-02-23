@@ -18,7 +18,7 @@
 %==========================================================
 
 \begin{abstract}
-This paper investigates the method of implementing a Virtual Private Network (VPN) system among containers. We implement a testing environment for two types of VPN, site-to-site and gateway-to-gateway, using both Vagrant with VirtualBox as the provider and Docker Compose to realize the same functionality. The result shows that, by migrating the test from the VMs to the Docker containers, we can save nearly 90\% of time and 94\% of memory used for testing the VPN systems. At the same time, the host machine still has no security risk increase.
+This paper investigates the method of implementing a Virtual Private Network (VPN) system among containers. We implement a testing environment for two types of VPN, site-to-site and gateway-to-gateway, as well as site-to-site in IPv6, using both Vagrant with VirtualBox as the provider and Docker Compose to realize the same functionality. The result shows that migrating the test from the VMs to the Docker containers can save nearly 90\% of time and 94\% of memory used for testing the VPN systems. At the same time, the host machine still has no security risk increase.
 
 \vspace{3mm}
 \noindent KEYWORDS: Container, Network, Cloud, VPN
@@ -79,7 +79,7 @@ range 0 to 6), SO\_RCVBUFFORCE, and SO\_SNDBUFFORCE.
 As we are using the MacVLAN to build the internal network, all the network manipulations mentioned above only work for the network components that belong to the corresponding namespace. There should not exist any security implications to the host network if we give net\_admin capability to the container.
 
 \subsection{IPv6}
-There is a way for configuring IPv6 networking in Docker \cite{docker_documentation_ipv6_2023}. However, it is only supported on Docker daemons running on Linux hosts and it does not support Docker Desktop.
+There is a way for configuring IPv6 networking in Docker \cite{docker_documentation_ipv6_2023}. However, currently, it is only supported on Docker Engine daemons running on Linux hosts and does not support Docker Desktop.
 
 %============================================================
 
@@ -127,7 +127,7 @@ Figure \ref{fig:gateway2gateway} shows the topology and corresponding address sp
   \end{center}
 \end{figure}
 
-Similar to Site to Site VPN in IPv4, but replace all the address space into IPv6.
+Site to Site in IPv6 is similar to Site to Site VPN in IPv4 but replaces all the address space in IPv6.
 
 Figure \ref{fig:ipv6site2site} shows the topology and corresponding address space under such circumstances.
 
@@ -164,7 +164,7 @@ In addition, for server S1, we use the Docker-in-Docker image to run docker cont
 
 \subsection{Site to Site in IPv6}
 
-Similar to Site to Site VPN in IPv4, just replace all the IPv4 address into IPv6 would complete the job.
+Site to Site in IPv6 is similar to Site to Site in IPv4. Just replacing all the IPv4 address with IPv6 would complete the job.
 
 %============================================================
 
@@ -178,7 +178,7 @@ The container solution dramatically reduces memory consumption when we start the
 
 The shell script for making all the related routing and firewall configurations in Docker containers and VMs are identical, so it is easy to migrate configurations from the VMs to the docker containers. We can simultaneously start the site-to-site VPN setup and the gateway-to-gateway VPN setup in Docker without interfering.
 
-We also verify that the command "ls /sys/devices/virtual/net -l" shows complete different results when executing from the host machine and inside the container.
+We also verify that the command "ls /sys/devices/virtual/net -l" shows completely different results when executing from the host machine and inside the container.
 
 Most importantly, our IPv4 setup can run in M1/M2 based Mac OS easily with docker desktop, while the VM ones fail to start.
 
