@@ -79,7 +79,12 @@ range 0 to 6), SO\_RCVBUFFORCE, and SO\_SNDBUFFORCE.
 As we are using the MacVLAN to build the internal network, all the network manipulations mentioned above only work for the network components that belong to the corresponding namespace. There should not exist any security implications to the host network if we give net\_admin capability to the container.
 
 \subsection{IPv6}
-There is a way for configuring IPv6 networking in Docker \cite{docker_documentation_ipv6_2023}. However, currently, it is only supported on Docker Engine daemons running on Linux hosts and does not support Docker Desktop.
+Configuring IPv6 networking in Docker \cite{docker_documentation_ipv6_2023} is also possible. Docker disables the IPv6 support by default. We can add the following content to the daemon configuration file (default "/etc/docker/daemon.json") or corresponding settings in Docker Desktop:
+
+\{
+  "ipv6": true,
+  "fixed-cidr-v6": "fd00::/80"
+\}
 
 %============================================================
 
