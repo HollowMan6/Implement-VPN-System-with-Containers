@@ -18,7 +18,7 @@
 %==========================================================
 
 \begin{abstract}
-This paper investigates the method of implementing a Virtual Private Network (VPN) system among containers. We implement a testing environment for two types of VPN, site-to-site and gateway-to-gateway, as well as site-to-site in IPv6, using both Vagrant with VirtualBox as the provider and Docker Compose to realize the same functionality. The result shows that migrating the test from the VMs to the Docker containers can save nearly 90\% of time and 94\% of memory used for testing the VPN systems. At the same time, the host machine still has no security risk increase.
+This paper investigates the method of implementing a Virtual Private Network (VPN) system among containers. We implement a testing environment for two types of VPN, site-to-site and host-to-host, as well as site-to-site in IPv6, using both Vagrant with VirtualBox as the provider and Docker Compose to realize the same functionality. The result shows that migrating the test from the VMs to the Docker containers can save nearly 90\% of time and 94\% of memory used for testing the VPN systems. At the same time, the host machine still has no security risk increase.
 
 \vspace{3mm}
 \noindent KEYWORDS: Container, Network, Cloud, VPN
@@ -95,7 +95,7 @@ This paper simulates a scenario where the IoT devices (clients) in two sites, A 
 
 In order to make the clients in both site A and site B connect to the cloud server safely, this paper uses strongSwan, a VPN implementation based on Internet Protocol Security (IPsec).
 
-This paper try to implement two types of VPN: site-to-site and gateway-to-gateway.
+This paper try to implement two types of VPN: site-to-site and host-to-host.
 
 \subsection{Site to Site}
 \begin{figure}[t!]
@@ -110,18 +110,18 @@ A site-to-site VPN connects different network systems located at different sites
 
 Figure \ref{fig:site2site} shows the topology and corresponding address space under such circumstances.
 
-\subsection{Gateway to Gateway}
+\subsection{Host to Host}
 \begin{figure}[t!]
   \begin{center}
-    \includegraphics[width=1.1\textwidth]{figures/gateway-to-gateway.pdf}
-    \caption{Gateway to Gateway}
-    \label{fig:gateway2gateway}
+    \includegraphics[width=1.1\textwidth]{figures/host-to-host.pdf}
+    \caption{Host to Host}
+    \label{fig:host2host}
   \end{center}
 \end{figure}
 
-A gateway-to-gateway VPN connects different gateways. The packages then get routed to different clients within the corresponding site according to the routing table of the gateway \cite{dulany2006performance}.
+A host-to-host VPN connects different gateways together. The packages then get routed to different clients within the corresponding site according to the routing table of the gateway \cite{dulany2006performance}.
 
-Figure \ref{fig:gateway2gateway} shows the topology and corresponding address space under such circumstances.
+Figure \ref{fig:host2host} shows the topology and corresponding address space under such circumstances.
 
 \subsection{Site to Site in IPv6}
 \begin{figure}[t!]
@@ -157,11 +157,11 @@ For the firewall, we also have to accept the post-routing traffic to the cloud s
 
 As there is no overlapping network address space within the site-to-site VPN, we can specify the IP address and subnet directly through Docker Compose. Also, we avoid using the IP address ending in ".1", as Docker does not allow us to assign that address to any container. These addresses are reserved for gateways or routers on a particular network (Even though we are simulating the Gateway and Router).
 
-\subsection{Gateway to Gateway}
+\subsection{Host to Host}
 
 About routing, for gateway A and B, we redirect the traffic from the original local server address 10.x.0.99 of port 8080 to cloud gateway S of port 8080 with Destination NAT. For gateway S, we redirect the traffic from the client gateway A and B of port 8080 to corresponding ports (30000 and 30001) on the server s1 address.
 
-There are overlapping network address spaces for gateway-to-gateway VPN. Suppose we specify the IP address and subnet directly through Docker Compose. In that case, there will be errors notifying us that "Pool overlaps with another one on this address space". Although technically, this should not be a problem, as we are creating a separate internal network without direct routing, Docker still forbids us.
+There are overlapping network address spaces for host-to-host VPN. Suppose we specify the IP address and subnet directly through Docker Compose. In that case, there will be errors notifying us that "Pool overlaps with another one on this address space". Although technically, this should not be a problem, as we are creating a separate internal network without direct routing, Docker still forbids us.
 
 We resolve the overlapping address space issue relatively hackingly, similar to IP address spoofing. When we do not specify the IP address of the network in Docker Compose, it will assign a random address from the docker address pool to the network interface. Now we can modify the IP address and subnet of the interface to our desired one, and no error will be thrown now.
 
@@ -181,7 +181,7 @@ The result shows that our container solution significantly reduces the fresh boo
 
 The container solution dramatically reduces memory consumption when we start the VPN system and test the network communication as well. The containers started with Docker Compose take 278 MB of memory in total. In contrast, the Virtual Machines started with Vagrant take 4.5 GB of memory.
 
-The shell script for making all the related routing and firewall configurations in Docker containers and VMs are identical, so it is easy to migrate configurations from the VMs to the docker containers. We can simultaneously start the site-to-site VPN setup and the gateway-to-gateway VPN setup in Docker without interfering.
+The shell script for making all the related routing and firewall configurations in Docker containers and VMs are identical, so it is easy to migrate configurations from the VMs to the docker containers. We can simultaneously start the site-to-site VPN setup and the host-to-host VPN setup in Docker without interfering.
 
 We also verify that the command "ls /sys/devices/virtual/net -l" shows completely different results when executing from the host machine and inside the container.
 
