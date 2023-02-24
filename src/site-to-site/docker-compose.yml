@@ -15,6 +15,12 @@ services:
       # Enable ipv4/ipv6 forwarding
       - net.ipv4.ip_forward=1
       - net.ipv6.conf.all.forwarding=1
+      # Security enhancements
+      - net.ipv4.conf.all.rp_filter=1
+      - net.ipv4.conf.all.send_redirects=0
+      - net.ipv4.conf.default.accept_redirects=0
+      - net.ipv4.conf.default.accept_source_route=0
+      - net.ipv4.conf.default.rp_filter=1
     cap_add:
       - NET_ADMIN
     volumes:
@@ -46,6 +52,12 @@ services:
       # Enable ipv4/ipv6 forwarding
       - net.ipv4.ip_forward=1
       - net.ipv6.conf.all.forwarding=1
+      # Security enhancements
+      - net.ipv4.conf.all.rp_filter=1
+      - net.ipv4.conf.all.send_redirects=0
+      - net.ipv4.conf.default.accept_redirects=0
+      - net.ipv4.conf.default.accept_source_route=0
+      - net.ipv4.conf.default.rp_filter=1
     cap_add:
       - NET_ADMIN
     volumes:
@@ -70,6 +82,12 @@ services:
       # Enable ipv4/ipv6 forwarding
       - net.ipv4.ip_forward=1
       - net.ipv6.conf.all.forwarding=1
+      # Security enhancements
+      - net.ipv4.conf.all.rp_filter=1
+      - net.ipv4.conf.all.send_redirects=0
+      - net.ipv4.conf.default.accept_redirects=0
+      - net.ipv4.conf.default.accept_source_route=0
+      - net.ipv4.conf.default.rp_filter=1
     cap_add:
       - NET_ADMIN
     volumes:
@@ -89,6 +107,12 @@ services:
       # Enable ipv4/ipv6 forwarding
       - net.ipv4.ip_forward=1
       - net.ipv6.conf.all.forwarding=1
+      # Security enhancements
+      - net.ipv4.conf.all.rp_filter=1
+      - net.ipv4.conf.all.send_redirects=0
+      - net.ipv4.conf.default.accept_redirects=0
+      - net.ipv4.conf.default.accept_source_route=0
+      - net.ipv4.conf.default.rp_filter=1
     cap_add:
       - NET_ADMIN
     volumes:
@@ -112,6 +136,12 @@ services:
       # Enable ipv4/ipv6 forwarding
       - net.ipv4.ip_forward=1
       - net.ipv6.conf.all.forwarding=1
+      # Security enhancements
+      - net.ipv4.conf.all.rp_filter=1
+      - net.ipv4.conf.all.send_redirects=0
+      - net.ipv4.conf.default.accept_redirects=0
+      - net.ipv4.conf.default.accept_source_route=0
+      - net.ipv4.conf.default.rp_filter=1
     cap_add:
       - NET_ADMIN
     volumes:
@@ -137,6 +167,12 @@ services:
       # Enable ipv4/ipv6 forwarding
       - net.ipv4.ip_forward=1
       - net.ipv6.conf.all.forwarding=1
+      # Security enhancements
+      - net.ipv4.conf.all.rp_filter=1
+      - net.ipv4.conf.all.send_redirects=0
+      - net.ipv4.conf.default.accept_redirects=0
+      - net.ipv4.conf.default.accept_source_route=0
+      - net.ipv4.conf.default.rp_filter=1
     cap_add:
       - NET_ADMIN
     volumes:
@@ -156,6 +192,12 @@ services:
       # Enable ipv4/ipv6 forwarding
       - net.ipv4.ip_forward=1
       - net.ipv6.conf.all.forwarding=1
+      # Security enhancements
+      - net.ipv4.conf.all.rp_filter=1
+      - net.ipv4.conf.all.send_redirects=0
+      - net.ipv4.conf.default.accept_redirects=0
+      - net.ipv4.conf.default.accept_source_route=0
+      - net.ipv4.conf.default.rp_filter=1
     cap_add:
       - NET_ADMIN
     volumes:
@@ -179,6 +221,12 @@ services:
       # Enable ipv4/ipv6 forwarding
       - net.ipv4.ip_forward=1
       - net.ipv6.conf.all.forwarding=1
+      # Security enhancements
+      - net.ipv4.conf.all.rp_filter=1
+      - net.ipv4.conf.all.send_redirects=0
+      - net.ipv4.conf.default.accept_redirects=0
+      - net.ipv4.conf.default.accept_source_route=0
+      - net.ipv4.conf.default.rp_filter=1
     cap_add:
       - NET_ADMIN
     volumes:
@@ -204,6 +252,12 @@ services:
       # Enable ipv4/ipv6 forwarding
       - net.ipv4.ip_forward=1
       - net.ipv6.conf.all.forwarding=1
+      # Security enhancements
+      - net.ipv4.conf.all.rp_filter=1
+      - net.ipv4.conf.all.send_redirects=0
+      - net.ipv4.conf.default.accept_redirects=0
+      - net.ipv4.conf.default.accept_source_route=0
+      - net.ipv4.conf.default.rp_filter=1
     cap_add:
       - NET_ADMIN
     volumes:
