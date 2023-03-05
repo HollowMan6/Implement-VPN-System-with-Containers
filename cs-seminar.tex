@@ -18,7 +18,7 @@
 %==========================================================
 
 \begin{abstract}
-This paper investigates the method of implementing a Virtual Private Network (VPN) system among containers. We implement a testing environment for two types of VPN, site-to-site and host-to-host, as well as site-to-site in IPv6, using both Vagrant with VirtualBox as the provider and Docker Compose to realize the same functionality. The result shows that migrating the test from the VMs to the Docker containers can save nearly 90\% of time and 94\% of memory used for testing the VPN systems. At the same time, the host machine still has no security risk increase.
+This paper investigates the method of implementing a Virtual Private Network (VPN) system among containers. We implement a testing environment for two types of VPN in IPv4, site-to-site and host-to-host, as well as site-to-site in IPv6, using both Vagrant with VirtualBox as the provider and Docker Compose to realize the same functionality. The result shows that migrating the test from the VMs to the Docker containers can save nearly 90\% of time and 94\% of memory used for testing the VPN systems. At the same time, the host machine still has no security risk increase.
 
 \vspace{3mm}
 \noindent KEYWORDS: Container, Network, Cloud, VPN
@@ -33,7 +33,7 @@ This paper investigates the method of implementing a Virtual Private Network (VP
 
 In recent years, as an increasing number of applications have been moved to the cloud, container technologies such as Docker have received much attention from the industry and the academia. Containers are much more efficient and lightweight than virtual machines because containers share the Linux Kernel with the host. In contrast, virtual machines employ hardware virtualization and have their own instance of kernel, which needs more resources \cite{10.1145/2988336.2988337}.
 
-VPNs are typically used in complex networking environments with many different network components. It is still a common practice \cite{9151942} to build and test network systems using virtual machines, which can be slow and troublesome. The problems can worsen when testing VPN systems, as each network component needs a virtual machine instance. It can be memory-consuming to simultaneously run multiple virtual machine instances on one host machine to simulate the network environment, which significantly perplexes testers with low-end devices and Continuous Integration / Continuous Delivery (CI/CD), as these environments are usually low on memory. Moreover, as Mac M1 / M2 chips are based on arm64 architecture, open-source virtual machine hypervisors are not currently well supported for arm64 hardware virtualization. However, arm64 is well supported by the containers \cite{9852232}.
+VPNs are typically used in complex networking environments with many different network components. It is still a common practice \cite{9151942} to build and test network systems using virtual machines, which can be slow and troublesome. The problems can worsen when testing VPN systems, as each network component needs a virtual machine instance. It can be memory-consuming to simultaneously run multiple virtual machine instances on one host machine to simulate the network environment, which significantly perplexes testers with low-end devices and Continuous Integration / Continuous Delivery (CI/CD) implementations, as these environments are usually low on memory. Moreover, as Mac M1 / M2 chips are based on arm64 architecture, open-source virtual machine hypervisors are not currently well supported for arm64 hardware virtualization. However, arm64 is well supported by the containers \cite{9852232}.
 
 Due to little research on implementing network systems using containers, this paper investigates the possibilities of implementing a VPN system based on Docker containers to overcome the disadvantages of virtual machines as mentioned above. This paper also analyze the functional and security limitations when implemented in this way.
 
@@ -93,9 +93,9 @@ Configuring IPv6 networking in Docker \cite{docker_documentation_ipv6_2023} is a
 
 This paper simulates a scenario where the IoT devices (clients) in two sites, A and B, would like to connect to the server in the cloud S. The topology is based on the Aalto University CS-E4300 Network Security 2022-2023 instance Project 2 \cite{aura_peltonen_bui_2022}, where site A, B, and cloud S both use the private IP address to improve the security and save the IPv4 address. Gateway A, B, and S connect site A, B, and S to the public Internet. The router in the topology is simplified, which routes across the Internet between the sites and the cloud. The address space between the gateway and the router simulates public, routable IPv4 addresses, even though it is private. Site A, B, and cloud S use the router to access the Internet.
 
-In order to make the clients in both site A and site B connect to the cloud server safely, this paper uses strongSwan, a VPN implementation based on Internet Protocol Security (IPsec).
+In order to make the clients in both site A and site B connect to the cloud server safely, this paper uses strongSwan, a VPN implementation based on Internet Protocol Security (IPSec).
 
-This paper try to implement two types of VPN: site-to-site and host-to-host.
+This paper tries to implement two types of VPN: site-to-site and host-to-host.
 
 \subsection{Site to Site}
 \begin{figure}[t!]
@@ -147,7 +147,7 @@ For routing, we use NAT Masquerade for the gateway interface so the local IP add
 
 We use strict firewall rules on the clients, as we assume there should be no need for the clients (IoT devices) to visit the Internet. We use iptables to set up firewall rules on gateway A and B for input and output. We accept IKE and ESP traffic (ESP traffic, port 500 and 4500 traffic in UDP) both from and to the cloud. Finally, we drop everything else, including the connection from and to the Internet.
 
-There is also some difference between the two kinds of VPN setup:
+There is also some difference between the two kinds of VPN setup as well as IPv4 and IPv6 one:
 
 \subsection{Site to Site}
 
@@ -163,13 +163,13 @@ About routing, for gateway A and B, we redirect the traffic from the original lo
 
 There are overlapping network address spaces for host-to-host VPN. Suppose we specify the IP address and subnet directly through Docker Compose. In that case, there will be errors notifying us that "Pool overlaps with another one on this address space". Although technically, this should not be a problem, as we are creating a separate internal network without direct routing, Docker still forbids us.
 
-We resolve the overlapping address space issue relatively hackingly, similar to IP address spoofing. When we do not specify the IP address of the network in Docker Compose, it will assign a random address from the docker address pool to the network interface. Now we can modify the IP address and subnet of the interface to our desired one, and no error will be thrown now.
+We resolve the overlapping address space issue a little bit hackingly, similar to IP address spoofing. When we do not specify the IP address of the network in Docker Compose, it will assign a random address from the docker address pool to the network interface. Now we can modify the IP address and subnet of the interface to our desired one, and no error will be thrown now.
 
 In addition, for server S1, we use the Docker-in-Docker image to run docker containers inside the server S1 container. Running that image requires the container to be privileged according to the documentation \cite{docker}. As a result, in practice, we must ensure the software running in server S1 is benign and poses no risk to the host machine. Otherwise, it is generally not recommended to run the Docker-in-Docker image.
 
 \subsection{Site to Site in IPv6}
 
-Site to Site in IPv6 is similar to Site to Site in IPv4. Just replacing all the IPv4 address with IPv6 would complete the job.
+Site to Site in IPv6 is similar to Site to Site in IPv4. Just replacing all the IPv4 address with IPv6 would complete the job. The only difference is that, for firewall rules, in addition to the existing configurations, we also have to allow ICMPv6 traffic, so that IPv6 Neighbor Discovery can work and different IPv6 addresses can communicate.
 
 %============================================================
 
@@ -195,6 +195,8 @@ Most importantly, our IPv4 setup can run in M1/M2 based Mac OS easily with docke
 This paper investigates the method to construct the testing environment of the VPN system through Docker containers. Containers are much more lightweight than virtual machines. As a mature virtualization technology already, containers can realize every functionality we require, just like virtual machines in our case, while increasing no security risk to the host machine that we run on top of.
 
 We hope this paper can inspire researchers and engineers to migrate their testing environment related to network systems from VMs into containers.
+
+Source code for this paper: https://github.com/HollowMan6/Implement-VPN-System-with-Containers/tree/main/src
 
 %============================================================
 
