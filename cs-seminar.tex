@@ -34,7 +34,7 @@ In recent years, container technologies, such as Docker, have received much atte
 
 Virtual Private Networks (VPN) are typically used in complex networking environments with many different network components. It is still a common practice \cite{9151942} to build and test network systems configurations using virtual machines, which allows the network engineer to experiment in a virtual environment before setting up the physical system. In addition, virtual networks are sometimes also needed for automated integration tests, as developers may want to test the usability and performance of their software under some specific network topology.
 
-However, creating a virtual computing environment can be slow and troublesome. The problems can worsen when testing VPN systems with a large number of nodes on one host machine, as each network component and host needs a virtual machine instance. It can be memory-consuming to simultaneously run many virtual machine instances on one host machine to simulate the network environment, which significantly troubles testers working on personal computers short of memory. Moreover, Mac M1 / M2 chips are based on the ARM64 architecture, and virtual machine hypervisors currently have limited support for ARM64 hardware virtualization. However, ARM64 is well supported by container runtimes \cite{9852232}. Furthermore, Containers are easy to launch on demand in the cloud, and the cost is low because they can run within one virtual machine. Running with virtual machines can significantly increase the cost of Continuous Integration / Continuous Delivery (CI/CD) implementations in the cloud, as using nested virtualization with limited resources is hard. Most importantly, building, storing, and managing multi-platform virtual machine images in the cloud is also challenging. However, Docker supports building multi-platform images \cite{dockermultiplatform} and uploading them to Docker Hub.
+However, creating a virtual computing environment can be slow and troublesome. The problems can worsen when testing VPN systems with a large number of nodes on one host machine, as each network component and host needs a virtual machine instance. It can be memory-consuming to simultaneously run many virtual machine instances on one host machine to simulate the network environment, which significantly troubles testers working on personal computers short of memory. Moreover, Mac M1 / M2 chips are based on the ARM64 architecture, and virtual machine hypervisors currently have limited support for ARM64 hardware virtualization. In contrast, ARM64 is well supported by container runtimes \cite{9852232}. Furthermore, Containers are easy to launch on demand in the cloud, and the cost is low because they can run within one virtual machine. Running with virtual machines can significantly increase the cost of Continuous Integration / Continuous Delivery (CI/CD) implementations in the cloud, as using nested virtualization with limited resources is hard. Most importantly, building, storing, and managing multi-platform virtual machine images in the cloud is also challenging. In contrast, Docker supports building multi-platform images \cite{dockermultiplatform} and uploading them to Docker Hub.
 
 Due to little research on implementing network systems using containers, this paper investigates the possibilities of implementing virtual network systems based on Docker containers to overcome the disadvantages of virtual machines mentioned above. This paper also analyzes the functional and security limitations when virtual networks are implemented this way.
 
@@ -44,7 +44,7 @@ This paper is organized as follows. Section 2 reviews the current technologies u
 
 
 \section{Docker Networking System}
-This section discusses the choice of the Docker container network driver for implementing the virtual network system. It also discusses how to enable routing and firewalls inside a container.
+This section discusses the choice of the Docker container network driver for implementing the virtual network system. It also discusses how to enable routing, firewalls and IPv6 inside a container.
 
 \subsection{Network Drivers}
 Docker employs a pluggable networking subsystem. Several drivers can provide the Docker network functionality. The default drivers include the bridge, host, overlay, IPVLAN, MACVLAN, and none. We can choose one of them to implement the virtual network system.
@@ -53,7 +53,7 @@ The none, host, and overlay drivers do not cater for our needs. Firstly, the non
 
 As a result, the possible candidates are bridge, IPVLAN, and MACVLAN. When examining the details, the bridge learns Media Access Control (MAC) addresses by checking the frame headers sent by the communicating hosts. On the other hand, the MACVLAN is a trivial bridge that does not need to learn as it already knows every MAC address it can receive \cite{9620212}. IPVLAN is similar to MACVLAN, except IPVLAN assigns the same MAC address to all containers attached to it. In contrast, MACVLAN assigns a different MAC address to each attached Docker container \cite{7502883}.
 
-MACVLAN is the best choice for our needs. As we only use the driver to implement the internal network, there is no need to use advanced flood control and forwarding database manipulation that are specific to the bridge driver. MACVLAN bridge mode allows the testbed network to run layer 2 (data link layer) protocols, such as the Address Resolution Protocol (ARP) and LLDP (Link Layer Discovery Protocol). MACVLAN also supports address configuration and discovery protocols, as well as other multicast protocols, such as Dynamic Host Configuration Protocol (DHCP) \cite{9708884}, Network Basic Input/Output System (NetBIOS), multicast Domain Name System (mDNS), Bonjour, Universal Plug and Play (UPnP) and Precision Time Protocol (PTP) \cite{9613320}. Moreover, according to Docker documentation related to networking \cite{docker_documentation_2023}, MACVLAN networks are the best choice when migrating from a VM setup, as MACVLAN makes the container appear as a physical device with its own MAC address. Furthermore, Gundall et al. \cite{9442123} conduct benchmarks for different virtualization technologies for the networking overhead. The result shows that the MACVLAN driver performs best in throughput while requiring the least CPU resources compared to the other network drivers.
+MACVLAN is the best choice for our needs. As we only use the driver to implement the internal network, there is no need to use advanced flood control and forwarding database manipulation that are specific to the bridge driver. MACVLAN bridge mode allows the testbed network to run layer 2 (data link layer) protocols, such as the Address Resolution Protocol (ARP) and Link Layer Discovery Protocol (LLDP). MACVLAN also supports address configuration and discovery protocols, as well as other multicast protocols, such as Dynamic Host Configuration Protocol (DHCP) \cite{9708884} and Precision Time Protocol (PTP) \cite{9613320}. Moreover, according to Docker documentation related to networking \cite{docker_documentation_2023}, MACVLAN networks are the best choice when migrating from a VM setup, as MACVLAN makes the container appear as a physical device with its own MAC address. Furthermore, Gundall et al. \cite{9442123} conduct benchmarks for different virtualization technologies for the networking overhead. The result shows that the MACVLAN driver performs best in throughput while requiring the least CPU resources compared to the other network drivers.
 
 \subsection{Routing and Firewall}
 
@@ -99,7 +99,7 @@ In order to make the clients in both site A and site B connect to the cloud serv
 \subsection{Host to Host}
 \begin{figure}[t!]
   \begin{center}
-    \includegraphics[width=1.1\textwidth]{figures/host-to-host.pdf}
+    \includegraphics[scale=1]{figures/host-to-host.pdf}
     \caption{Host to Host}
     \label{fig:host2host}
   \end{center}
@@ -113,12 +113,12 @@ Figure \ref{fig:host2host} shows the topology and corresponding address spaces u
 
 A site-to-site VPN connects different network systems located at different sites together directly \cite{9022848}. In this case, the address spaces of sites A, B and the cloud network S should not overlap \cite{AKYILDIZ2023100695}.
 
-Our site-to-site VPN topology is almost the same as figure \ref{fig:host2host}, except that the address space for site A is 10.2.0.0/16, and cloud S is 10.3.0.0/16.
+Our site-to-site VPN topology is almost the same as figure \ref{fig:host2host}, except that the address space for site B is 10.2.0.0/16, and cloud S is 10.3.0.0/16.
 
 \subsection{Site to Site in IPv6}
 \begin{figure}[t!]
   \begin{center}
-    \includegraphics{figures/ipv6-site-to-site.pdf}
+    \includegraphics[scale=1]{figures/ipv6-site-to-site.pdf}
     \caption{Site to Site in IPv6}
     \label{fig:ipv6site2site}
   \end{center}
@@ -135,7 +135,7 @@ Figure \ref{fig:ipv6site2site} shows the topology and corresponding address spac
 
 To manage the Docker containers, we use Docker Compose for orchestration. Based on the figures above, we make each network component a separate container, assign the net\_admin capability to each container, and implement the network with the MACVLAN driver. We only connect the router to the Docker default bridge network to enable connections to the public Internet. Finally, we set up the routing and firewall and configured the strongSwan IPsec with certificates.
 
-We use Network Address Translation (NAT) masquerade for the gateway interface to prevent leaking local IP addresses outside their subnets for routing. We bind the preconfigured local server IP address 10.x.0.99 to the interface eth0 of corresponding gateway A and B.
+We use Network Address Translation (NAT) masquerade for the gateway interface to prevent leaking local IP addresses outside their subnets for routing. We bind the preconfigured local server IP address 10.1.0.99 or 10.2.0.99 to the interface eth0 of corresponding gateway A and B according to their subnets.
 
 We use strict firewall rules on the clients, assuming there should be no need for the clients (IoT devices) to visit the Internet. We use iptables to set up gateway A and B firewall rules for input and output. We accept Internet Key Exchange (IKE) and Encapsulating Security Payload (ESP) traffic (port 500 and 4500 in UDP) from and to the cloud. Finally, we drop everything else, including the connection from and to the Internet.
 
@@ -178,6 +178,7 @@ The shell script commands for all the routing and firewall configurations in Doc
 \subsection{Performance}
 \begin{table}[t!]
   \begin{center}
+    \caption{Performance Test Result in Average}
     \begin{tabular}{|l|lr|}
     \hline
     Solution               & Boot Time$^1$ & Memory$^2$ \\
@@ -186,7 +187,6 @@ The shell script commands for all the routing and firewall configurations in Doc
     Vagrant + VirtualBox   &  689 s    &  4.5 GB \\
     \hline
     \end{tabular}
-    \caption{Performance Test Result in Average}
     \label{tab:result}
   \end{center}
 \end{table}
@@ -204,8 +204,8 @@ There are also some limitations of the Docker networking model, which cause seve
 \setlength{\itemsep}{0pt}
 \setlength{\parsep}{0pt}
 \setlength{\parskip}{0pt}
-\item We are not allowed to assign the IP address ending in ".1" to a Docker container, and we will only get a warning if we do that in a VM.
 \item We cannot have overlapped IP address ranges in different virtual network segments assigned by Docker. The only way to do that is to configure the IP addresses manually inside containers.
+\item We are not allowed to assign the IP address ending in ".1" to a Docker container, and we will only get a warning if we do that in a VM. Similar to the previous limitation, a workaround is to assign the IP addresses ending in ".1" manually inside containers.
 \end{enumerate}
 
 In addition, if we want to test the scalability of the network software and run Docker containers inside a Docker container, that container needs to be privileged. Such requirements may cause some security risks, but this is unnecessary for implementing virtual networks.
