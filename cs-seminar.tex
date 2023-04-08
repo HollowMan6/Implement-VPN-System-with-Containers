@@ -17,7 +17,7 @@
 %==========================================================
 
 \begin{abstract}
-This paper investigates the method of implementing a virtual network system among containers. We first implement a testbed environment for VPN in IPv4 (site-to-site, host-to-host) and IPv6 (site-to-site). Then we compare VirtualBox-based Vagrant with Docker Compose in realizing the same networking features. The result shows that migrating the test from the Virtual Machines (VM) to the Docker containers can save nearly 90\% of CPU time and 94\% of memory for the VPN system. At the same time, the host machine still has no security risk increase.
+This paper investigates the method of implementing a virtual network system among containers. We first implement a testbed environment for Virtual Private Network (VPN) systems in IPv4 (site-to-site, host-to-host) and IPv6 (site-to-site). Then we compare VirtualBox-based Vagrant with Docker Compose in realizing the same networking features. The result shows that migrating the test from the Virtual Machines (VM) to the Docker containers can save nearly 90\% of CPU time and 94\% of memory for the VPN system. At the same time, the host machine still has no security risk increase.
 
 \vspace{3mm}
 \noindent KEYWORDS: Container, Network, Cloud, VPN
@@ -32,9 +32,9 @@ This paper investigates the method of implementing a virtual network system amon
 
 In recent years, container technologies, such as Docker, have received much attention from the industry and academia as applications are moving to the cloud. Containers are much more efficient and lightweight than virtual machines because containers share the Linux kernel with the host. In contrast, virtual machines employ hardware virtualization and have their own kernel instance, which consumes more resources \cite{10.1145/2988336.2988337}.
 
-Virtual Private Networks (VPN) are typically used in complex networking environments with many different network components. It is still a common practice \cite{9151942} to build and test network systems configurations using virtual machines, which allows the network engineer to experiment in a virtual environment before setting up the physical system. In addition, virtual networks are sometimes also needed for automated integration tests, as developers may want to test the usability and performance of their software under some specific network topology.
+It is still a common practice \cite{9151942} to build and test network systems configurations using virtual machines, which allows the network engineer to experiment in a virtual environment before setting up the physical system. In addition, virtual networks are sometimes also needed for automated integration tests, as developers may want to test the usability and performance of their software under some specific network topology.
 
-However, creating a virtual computing environment can be slow and troublesome. The problems can worsen when testing VPN systems with a large number of nodes on one host machine, as each network component and host needs a virtual machine instance. It can be memory-consuming to simultaneously run many virtual machine instances on one host machine to simulate the network environment, which significantly troubles testers working on personal computers short of memory. Moreover, Mac M1 / M2 chips are based on the ARM64 architecture, and virtual machine hypervisors currently have limited support for ARM64 hardware virtualization. In contrast, ARM64 is well supported by container runtimes \cite{9852232}. Furthermore, Containers are easy to launch on demand in the cloud, and the cost is low because they can run within one virtual machine. Running with virtual machines can significantly increase the cost of Continuous Integration / Continuous Delivery (CI/CD) implementations in the cloud, as using nested virtualization with limited resources is hard. Most importantly, building, storing, and managing multi-platform virtual machine images in the cloud is also challenging. In contrast, Docker supports building multi-platform images \cite{dockermultiplatform} and uploading them to Docker Hub.
+However, creating a virtual computing environment can be slow and troublesome. The problems can worsen when testing virtual network systems with a large number of nodes on one host machine, as each network component and host needs a virtual machine instance. It can be memory-consuming to simultaneously run many virtual machine instances on one host machine to simulate the network environment, which significantly troubles testers working on personal computers short of memory. Moreover, Mac M1 / M2 chips are based on the ARM64 architecture, and virtual machine hypervisors currently have limited support for ARM64 hardware virtualization. In contrast, ARM64 is well supported by container runtimes \cite{9852232}. Furthermore, Containers are easy to launch on demand in the cloud, and the cost is low because they can run within one virtual machine. Running with virtual machines can significantly increase the cost of Continuous Integration / Continuous Delivery (CI/CD) implementations in the cloud, as using nested virtualization with limited resources is hard. Most importantly, building, storing, and managing multi-platform virtual machine images in the cloud is also challenging. In contrast, Docker supports building multi-platform images \cite{dockermultiplatform} and uploading them to Docker Hub.
 
 Due to little research on implementing network systems using containers, this paper investigates the possibilities of implementing virtual network systems based on Docker containers to overcome the disadvantages of virtual machines mentioned above. This paper also analyzes the functional and security limitations when virtual networks are implemented this way.
 
@@ -57,15 +57,15 @@ MACVLAN is the best choice for our needs. As we only use the driver to implement
 
 \subsection{Routing and Firewall}
 
-By default, Docker containers do not allow manipulating container network devices and setting routing tables or firewalls inside the containers. These features can be enabled by assigning the net\_admin capability to the container.
+By default, Docker do not allow manipulating container network devices and setting routing tables or firewalls inside the containers. These features can be enabled by assigning the net\_admin capability to the container.
 
 According to the capabilities man page \cite{capabilities}, assigning the net\_admin capability to containers allows the following network-related operations:
 \begin{enumerate}
 \setlength{\itemsep}{0pt}
 \setlength{\parsep}{0pt}
 \setlength{\parskip}{0pt}
-\item Interface configuration;
-\item Administration of IP firewall, masquerading, and accounting;
+\item Making interface configuration;
+\item Administrating IP firewall, masquerading, and accounting;
 \item Modifying routing tables;
 \item Binding to any address for transparent proxying;
 \item Setting the type-of-service (TOS);
@@ -204,7 +204,7 @@ There are also some limitations of the Docker networking model, which cause seve
 \setlength{\itemsep}{0pt}
 \setlength{\parsep}{0pt}
 \setlength{\parskip}{0pt}
-\item We cannot have overlapped IP address ranges in different virtual network segments assigned by Docker. The only way to do that is to configure the IP addresses manually inside containers.
+\item We cannot have overlapped IP address ranges in different virtual network interfaces assigned by Docker. The only way to do that is to configure the IP addresses manually inside containers.
 \item We are not allowed to assign the IP address ending in ".1" to a Docker container, and we will only get a warning if we do that in a VM. Similar to the previous limitation, a workaround is to assign the IP addresses ending in ".1" manually inside containers.
 \end{enumerate}
 
