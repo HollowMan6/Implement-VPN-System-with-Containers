@@ -3,6 +3,7 @@
 \usepackage{graphicx}
 \usepackage[SCI]{aaltologo}
 \usetheme[invariant]{Aalto}
+\setbeamertemplate{sections/subsections in toc}[square]
 
 \title{Implementing a Virtual Network\\ System among Containers}
 \author{\texorpdfstring{Songlin Jiang\\ \url{songlin.jiang@aalto.fi}}{Songlin Jiang}}
@@ -12,27 +13,25 @@
 \begin{document}
 \frame{\titlepage}
 
-\section{Introduction}
+\section*{Introduction}
 \begin{frame}{Introduction}
 \begin{itemize}
-\item Rise of \textbf{container technologies} has attracted attention from industry and academia as applications are moving to the cloud.
-\item \textbf{Virtual machines} are commonly used for building and testing network systems configurations before deployed into real world.
-\item There are many drawbacks in our usage for choosing \textbf{virtual machine}, and \textbf{container} is a good cure for those drawbacks.
-\item My paper investigates the possibility of implementing virtual network systems using \textbf{Docker containers} instead.
+\item Virtual machines (VM) are commonly used for \textbf{building and testing} network system configurations.
+\item  \textbf{containers} can replace \textbf{VMs} to overcome VMs' drawbacks. However, \textbf{no one has tried} to realize that using \textbf{Docker}.
+\item Rise of \textbf{container technologies} has attracted great attention.
 \end{itemize}
 \begin{figure}[t!]
   \begin{center}
-    \includegraphics[scale=0.48]{slide/img/vs.png}
+    \includegraphics[scale=0.7]{slide/img/vs.png}
     \label{fig:demo}
   \end{center}
 \end{figure}
 \end{frame}
 
-\begin{frame}{Overview}
-    \tableofcontents
-\end{frame}
-
 \section{Docker Networking System}
+\begin{frame}{Overview}
+    \tableofcontents[currentsection]
+\end{frame}
 \subsection{Network Drivers}
 \begin{frame}{Network Drivers}
 \begin{itemize}
@@ -93,6 +92,9 @@ We choose \textbf{MACVLAN} finally:
 \end{frame}
 
 \section{Case Study: VPN}
+\begin{frame}{Overview}
+    \tableofcontents[currentsection]
+\end{frame}
 \subsection{VPN Overview}
 \begin{frame}{VPN Overview}
 \begin{itemize}
@@ -133,6 +135,9 @@ We choose \textbf{MACVLAN} finally:
 \end{frame}
 
 \section{Evaluation}
+\begin{frame}{Overview}
+    \tableofcontents[currentsection]
+\end{frame}
 \subsection{Usability and Portability}
 \begin{frame}{Usability and Portability}
 With \textbf{Docker Compose}, the Docker orchestration tool, containers \textbf{outperforms} VirtualBox-based Vagrant in many aspects:
@@ -180,15 +185,15 @@ With \textbf{Docker Compose}, the Docker orchestration tool, containers \textbf{
     \end{table}
     The container based solution \textit{reduces}:
     \begin{enumerate}
-    \item \textbf{Fresh boot time}\footnote{Also include the running environment building time for the host platform} by nearly \textit{90\%}
-    \item \textbf{Memory consumption}\footnote{Maximum value during the whole running process} by nearly \textit{94\%}
+    \item \textbf{Fresh boot time} by nearly \textit{90\%}
+    \item \textbf{Memory consumption} by nearly \textit{94\%}
     \end{enumerate}
 \end{frame}
 
 \subsection{Security and Limitations}
 \begin{frame}{Security and Limitations}
 \begin{itemize}
-\item We can't visit the host network interfaces inside containers, and vice versa. The container network stacks are \textbf{isolated} from host.
+\item The container network stacks are \textbf{isolated} from host.
 \end{itemize}
 
 \begin{itemize}
@@ -202,13 +207,22 @@ With \textbf{Docker Compose}, the Docker orchestration tool, containers \textbf{
 \end{frame}
 
 \section{Conclusion}
+\begin{frame}{Overview}
+    \tableofcontents[currentsection]
+\end{frame}
 \begin{frame}{Conclusion}
 \begin{itemize}
+\item \textbf{It's possible to have a virtual network system with Docker!}
 \item Containers are much more \textbf{lightweight} than virtual machines.
-\item As a mature virtualization technology, containers can \textbf{realize every functionality} we require for virtual network systems.
-\item Container is a suitable \textbf{replacement} for virtual machines if you want to migrate the virtual network systems away from VMs.
-\item Hope it can inspire researchers and engineers to migrate their network systems testing environment from VMs into containers.
+\item Containers \textbf{realized all functionalities} for VPN case study.
+\item Container is a suitable \textbf{replacement} for virtual machines.
 \end{itemize}
+\begin{figure}[t!]
+  \begin{center}
+    \includegraphics[scale=0.25]{slide/img/docker-win.png}
+    \label{fig:docker-win}
+  \end{center}
+\end{figure}
 \end{frame}
 
 \section{Q\&A}
